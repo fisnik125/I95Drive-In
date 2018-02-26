@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Navbar } from 'react-bootstrap';
 import { Link } from  'react-router-dom';
+import '../nav/TopNavBar.css';
 
 export default class TopNavBar extends Component {
   render() {
