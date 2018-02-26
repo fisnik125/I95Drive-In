@@ -1,21 +1,31 @@
 import React, { Component } from 'react';
-import { Navbar } from 'react-bootstrap';
-import { Link } from  'react-router-dom';
+import { Navbar, Nav, NavItem } from 'react-bootstrap';
+// import { Link } from  'react-router-dom';
 import '../nav/TopNavBar.css';
 
 export default class TopNavBar extends Component {
   render() {
     return (
-        // tslint:disable-next-line:jsx-boolean-value
-        <Navbar default collapseOnSelect>
-        <Navbar.Header>
-          <Navbar.Brand>
-            <Link to="/">I95 Drive-In</Link>
-          </Navbar.Brand>
-          <Navbar.Toggle />
-        </Navbar.Header>
-      
-      </Navbar>
+      <Navbar>
+      <Navbar.Header>
+        <Navbar.Brand>
+          <a href="#home">I95 Drive-In</a>
+        </Navbar.Brand>
+      </Navbar.Header>
+      <Nav className="pull-right">
+        <NavItem eventKey={1} href="/Movies">
+          Movies
+        </NavItem>
+        <NavItem eventKey={2} href="/Showtimes">
+          ShowTimes
+        </NavItem>
+        <NavItem eventKey={3} href="/Login">
+          Login
+        </NavItem>
+       
+      </Nav> 
+    </Navbar>
+  
     );
   }
 }
