@@ -6,6 +6,7 @@ import Showtimes from '../components/Showtimes';
 import Movies from '../components/Movies';
 import Login from  '../components/Login';
 import TopNavBar from '../components/nav/TopNavBar';
+import HomeComponent from '../components/HomeComponent';
 
 export default class Home extends React.Component {
   render() {
@@ -13,6 +14,7 @@ export default class Home extends React.Component {
     
         <div>
           <TopNavBar />
+          <Route path="/HomeComponent" component={HomeComponent}/>
           <Route path="/showtimes" component={Showtimes}/> 
         <Route path="/Login" component={Login}/> 
         <Route path="/Movies" component={Movies}/> 

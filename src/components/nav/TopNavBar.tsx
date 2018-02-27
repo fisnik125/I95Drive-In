@@ -9,7 +9,7 @@ export default class TopNavBar extends Component {
       <Navbar>
       <Navbar.Header>
         <Navbar.Brand>
-          <a href="#home">I95 Drive-In</a>
+          <a href="/HomeComponent">I95 Drive-In</a>
         </Navbar.Brand>
       </Navbar.Header>
       <Nav className="pull-right">
