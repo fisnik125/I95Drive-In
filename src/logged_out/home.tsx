@@ -7,6 +7,7 @@ import Movies from '../components/Movies';
 import Login from  '../components/Login';
 import TopNavBar from '../components/nav/TopNavBar';
 import HomeComponent from '../components/HomeComponent';
+import Admin from '../components/Admin';
 
 export default class Home extends React.Component {
   render() {
@@ -18,6 +19,7 @@ export default class Home extends React.Component {
           <Route path="/showtimes" component={Showtimes}/> 
         <Route path="/Login" component={Login}/> 
         <Route path="/Movies" component={Movies}/> 
+        <Route path="/Admin" component={Admin}/>
   
         </div>
      

@@ -49,11 +49,13 @@ export default class Login extends Component  {
           </FormGroup>
           <Button
             className="block"
+            bsStyle="primary"
             bsSize="large"
-            disabled={!this.validateForm()}
             type="submit"
+            href="/Admin"
           >
             Login
+          
           </Button>
         </form>
       </div>
