@@ -1,5 +1,4 @@
 const path = require('path');
-// const StartServerPlugin  = require('start-server-webpack-plugin');
 const NodemonPlugin = require('nodemon-webpack-plugin');
 const nodeExternals = require('webpack-node-externals');
 
@@ -20,6 +19,6 @@ module.exports = {
   },
   plugins: [
     // Should only be activated when webpack --watch is passed
-    new NodemonPlugin({ watch: path.resolve('build') })
+    new NodemonPlugin(),
   ],
 };
