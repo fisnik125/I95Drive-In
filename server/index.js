@@ -1,6 +1,8 @@
 import express from 'express';
 import bodyParser from 'body-parser';
-import { findOrCreateDB } from '../db';
+
+import { findOrCreateDB, query } from '../db';
+import Users from '../db/users';
 
 require('dotenv').config(); // Load .env files into process.env
 
@@ -12,8 +14,16 @@ const port = PORT || 8080;
 app.use(express.static('client/build'));
 app.use(bodyParser.json());
 
-app.post('/api/user', (req, res) => {
-  res.send({ express: 'Hello From Express' });
+app.post('/api/user', async (req, res) => {
+  const { email, password } = req.body;
+
+  const result = await query(Users.login, [email, password]);
+
+  if (result.rows.length === 0) {
+    res.status(400).send({ message: 'No user matched that email or password.' });
+  } else {
+    res.status(200).send({ message: 'User Authenticated.' });
+  }
 });
 
 // All remaining requests return the React app, so it can handle routing.

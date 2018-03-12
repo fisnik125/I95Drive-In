@@ -1,6 +1,10 @@
 import { Pool, Client } from 'pg';
 
-export const query = (text, params) => Pool.query(text, params);
+import Users from './users'
+
+const pool = new Pool();
+
+export const query = (text, params) => pool.query(text, params);
 
 export const findOrCreateDB = async (dbName) => {
   const client = new Client({ database: 'postgres' });
@@ -9,10 +13,14 @@ export const findOrCreateDB = async (dbName) => {
   const result = await client.query("SELECT count(*) FROM pg_catalog.pg_database WHERE datname = $1", [dbName]);
   const count = result.rows[0].count;
 
-  if (count === '0') {
-    console.log(`Database not found. Creating: ${dbName}`);
-    await client.query(`CREATE DATABASE ${dbName}`);
-  } else {
+  if (count !== '0') {
     console.log('Found database. No action taken.');
+    return true;
   }
+
+  console.log(`Database not found. Creating: ${dbName}`);
+  await client.query(`CREATE DATABASE ${dbName}`);
+  await client.end(); // close connection and start using 'i95drivein' implicitly
+
+  await query(Users.createTable);
 };
