@@ -1,22 +1,24 @@
 {
-  "name": "my-app",
+  "name": "I95-Drivein",
   "version": "0.1.0",
   "private": true,
-  "dependencies": {
-    "react": "^16.2.0",
-    "react-bootstrap": "^0.32.1",
-    "react-dom": "^16.2.0",
-    "react-jsx": "^1.0.0",
-    "react-router": "^4.2.0",
-    "react-router-dom": "^4.2.2",
-    "react-scripts": "2.13.0"
-  },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts-eject"
+    "client": "cd client && yarn start",
+    "build": "webpack --config server/webpack.config.js",
+    "dev": "concurrently --kill-others-on-fail \"yarn build --watch\" \"yarn client\"",
+    "test": "cd client && yarn test"
+  },
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "dotenv": "^5.0.0",
+    "express": "^4.16.2",
+    "pg": "^7.4.1"
   },
   "devDependencies": {
+    "concurrently": "^3.5.0",
+    "nodemon-webpack-plugin": "^0.1.6",
+    "webpack": "^4.0.1",
+    "webpack-cli": "^2.0.9",
+    "webpack-node-externals": "^1.6.0"
   }
 }

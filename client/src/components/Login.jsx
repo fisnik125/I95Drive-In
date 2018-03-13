@@ -3,7 +3,7 @@ import { FormGroup, FormControl, ControlLabel, Button } from 'react-bootstrap';
 import '../components/Login.css';
 
 export default class Login extends Component  {
-  constructor(props: {}) {
+  constructor(props) {
     super(props);
 
     this.state = {
@@ -16,15 +16,31 @@ export default class Login extends Component  {
     return ; // this.state.email.length > 0 && this.state.password.length > 0;
   }
 
-  // handleChange = event => {
-  //   this.setState({
-  //     [event.target.id]: event.target.value
-  //   });
-  // }
+  handleChange = ({ target: { value, id } }) => {
+    this.setState({ [id]: value });
+  }
 
-  // handleSubmit = event => {
-  //   event.preventDefault();
-  // }
+  handleSubmit = (ev) => {
+    const { email, password } = this.state;
+
+    ev.preventDefault();
+
+    this.callApi(email, password)
+      .then(res => console.log(res))
+      .catch(err => console.error(err));
+  }
+
+  callApi = async (email, password) => {
+    const response = await fetch('/api/user', {
+      body: JSON.stringify({ email, password }),
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+    });
+    const body = await response.json();
+
+    if (response.status !== 200) throw Error(body.message);
+    return body
+  }
 
   render() {
     return (
@@ -35,27 +51,28 @@ export default class Login extends Component  {
             <FormControl
               className="autoFocus"
               type="email"
-            //  value={this.state.email}
-            //  onChange={this.handleChange}
+              name="email"
+              value={this.state.email}
+              onChange={this.handleChange}
             />
           </FormGroup>
           <FormGroup controlId="password" bsSize="large">
             <ControlLabel>Password</ControlLabel>
             <FormControl
-            //  value={this.state.password}
-          //    onChange={this.handleChange}
+              name="password"
+              value={this.state.password}
+              onChange={this.handleChange}
               type="password"
             />
           </FormGroup>
           <Button
+            onClick={this.handleSubmit}
             className="block"
             bsStyle="primary"
             bsSize="large"
             type="submit"
-            href="/Admin"
-          >
+            href="/Admin">
             Login
-          
           </Button>
         </form>
       </div>
