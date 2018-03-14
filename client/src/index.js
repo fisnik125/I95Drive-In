@@ -1,13 +1,13 @@
 import { BrowserRouter } from 'react-router-dom';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Home from './logged_out/home';
+import Home from './logged_out/Home';
 import registerServiceWorker from './registerServiceWorker';
 import './index.css';
 
 ReactDOM.render(
   <BrowserRouter>
-    <Home />
+    <Home  />
   </BrowserRouter>,
   document.getElementById('root')
 );

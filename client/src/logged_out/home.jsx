@@ -1,6 +1,6 @@
-import * as React from 'react';
-import './home.css';
-import {  Route } from  'react-router-dom';
+import React from 'react';
+import './Home.css';
+import { Switch, Route } from  'react-router-dom';
 // import { BrowserRouter as Router, Route } from 'react-router-dom';
 import Showtimes from '../components/Showtimes';
 import Movies from '../components/Movies';
@@ -8,21 +8,22 @@ import Login from  '../components/Login';
 import TopNavBar from '../components/nav/TopNavBar';
 import HomeComponent from '../components/HomeComponent';
 import Admin from '../components/Admin';
+import NotFound from '../components/NotFound';
 
-export default class Home extends React.Component {
-  render() {
-    return (
-    
+const Home = () => (
         <div>
           <TopNavBar />
-          <Route path="/HomeComponent" component={HomeComponent}/>
-          <Route path="/showtimes" component={Showtimes}/> 
-        <Route path="/Login" component={Login}/> 
-        <Route path="/Movies" component={Movies}/> 
-        <Route path="/Admin" component={Admin}/>
-  
+          <Switch>
+            <Route exact path ="/" component={HomeComponent}/>
+            <Route exact path="/showtimes" component={Showtimes}/> 
+            <Route exact path="/login" component={Login}/> 
+            <Route exact path="/movies" component={Movies}/> 
+            <Route exact path="/admin" component={Admin}/>
+            <Route component={NotFound} />
+          </Switch>
         </div>
      
-    );
-  }
-}
+)
+
+
+export default Home;
