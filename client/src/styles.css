@@ -1,12 +1,21 @@
 /*CINEMA FONT IMPORT*/
 @import url('https://fonts.googleapis.com/css?family=Limelight');
 
-.nav-item{
-  text-decoration: none;
+a{
+  text-decoration: none !important;
+  padding-right:5px;
+  color:white !important;
+  font-family: 'Limelight', cursive;
+}
+
+a:hover {
+  text-shadow: 0 0 3px #f2f2f2;
 }
 
 #logo{
   font-family: 'Limelight', cursive;
+  color: white;
+  font-size: 28px;
 }
 
 /*SIDENAV*/
@@ -47,6 +56,8 @@
 
 #desktop{
   display:none;
+  margin-top: 15%;
+  margin-bottom: 15%;
 }
 
 #burger-btn{

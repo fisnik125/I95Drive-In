@@ -25,7 +25,7 @@ class SideNav extends Component {
       </div>
 
       <a id="burger-btn" onClick={this.openNav}>
-        <i className="fas fa-bars" />
+        <i className="fas fa-bars fa-2x" />
       </a>
     </div>
     );

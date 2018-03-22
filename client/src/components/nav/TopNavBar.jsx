@@ -11,7 +11,10 @@ export default class TopNavBar extends Component {
       <Navbar>
       <Navbar.Header>
         <Navbar.Brand>
-          <a id="logo" href="/HomeComponent">I95 Drive-In</a>
+          <Link to="/">
+            <i className="fas fa-film fa-2x"></i>
+            <a id="logo">I95 Drive-In</a>
+          </Link>
         </Navbar.Brand>
        <SideNav />
       </Navbar.Header>
