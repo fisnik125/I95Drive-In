@@ -25,7 +25,6 @@ a:hover {
 }
 
 .sidenav {
-    border: double;
     height: 100%; /* 100% Full-height */
     width: 0; /* 0 width - change this with JavaScript */
     position: fixed; /* Stay in place */

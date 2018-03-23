@@ -1,7 +1,7 @@
 import { BrowserRouter } from 'react-router-dom';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Home from './logged_out/Home';
+import Home from './logged_out/home';
 import registerServiceWorker from './registerServiceWorker';
 import './index.css';
 import './styles.css';

@@ -1,5 +1,5 @@
 import React from 'react';
-import './Home.css';
+import './home.css';
 import { Switch, Route } from  'react-router-dom';
 // import { BrowserRouter as Router, Route } from 'react-router-dom';
 import Showtimes from '../components/Showtimes';
