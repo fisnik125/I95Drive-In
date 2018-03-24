@@ -15,7 +15,7 @@ class SideNav extends Component {
 
   render() {
     return ( 
-    <div id="">
+    <div id="mobile">
     {/*
       <div id="mySidenav" className="sidenav">
         <a href="#">About</a>

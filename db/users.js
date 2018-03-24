@@ -5,4 +5,5 @@ export default {
      admin BOOLEAN DEFAULT FALSE
    );`,
    login: `SELECT * FROM users WHERE email = $1 AND password = $2`,
+   register: `INSERT INTO users VALUES ($1,$2)`
 };

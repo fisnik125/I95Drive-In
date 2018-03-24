@@ -40,6 +40,11 @@ export default class TopNavBar extends Component {
               Login
             </Link>
           </NavItem>
+          <NavItem eventKey={5}>
+            <Link to="/registration">
+              Registration
+            </Link>
+          </NavItem>
         </div>
       </Nav> 
     </Navbar>

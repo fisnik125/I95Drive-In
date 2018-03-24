@@ -33,7 +33,7 @@ export default class Login extends Component  {
   callApi = async (email, password) => {
     const response = await fetch('/api/user', {
       body: JSON.stringify({ email, password }),
-      method: 'POST',
+      method: 'GET',
       headers: { 'content-type': 'application/json' },
     });
     const body = await response.json();

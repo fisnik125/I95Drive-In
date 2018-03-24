@@ -14,7 +14,8 @@ const port = PORT || 8080;
 app.use(express.static('client/build'));
 app.use(bodyParser.json());
 
-app.post('/api/user', async (req, res) => {
+// Login
+app.get('/api/user', async (req, res) => {
   const { email, password } = req.body;
 
   const result = await query(Users.login, [email, password]);
@@ -23,6 +24,18 @@ app.post('/api/user', async (req, res) => {
     res.status(400).send({ message: 'No user matched that email or password.' });
   } else {
     res.status(200).send({ message: 'User Authenticated.' });
+  }
+});
+
+// Registration
+app.post('/api/user', async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    await query(Users.register, [email, password]);
+    res.status(200).send({ message: 'User Created.' });
+  } catch(error){
+    res.status(404).send({ message: `Error creating user: ${error.message}` });
   }
 });
 
