@@ -6,6 +6,7 @@
     "client": "cd client && yarn start",
     "build": "webpack --config server/webpack.config.js",
     "dev": "concurrently --kill-others-on-fail \"yarn build --watch\" \"yarn client\"",
+    "fixtures:load:movies": "node db/fixtures/movies.js",
     "test": "cd client && yarn test"
   },
   "dependencies": {

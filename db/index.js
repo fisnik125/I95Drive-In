@@ -1,6 +1,7 @@
 import { Pool, Client } from 'pg';
 
 import Users from './users'
+import Movies from './movies';
 
 const pool = new Pool();
 
@@ -23,4 +24,5 @@ export const findOrCreateDB = async (dbName) => {
   await client.end(); // close connection and start using 'i95drivein' implicitly
 
   await query(Users.createTable);
+  await query(Movies.createTable);
 };
