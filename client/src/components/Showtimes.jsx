@@ -6,6 +6,10 @@ export default class Showtimes extends Component {
     return (
       <div>
         <h1> ShowTimes  </h1>
+        <form>
+        	<input></input>
+        	<input></input>
+        </form>
       </div>
     );
   }

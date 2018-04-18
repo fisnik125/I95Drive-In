@@ -10,13 +10,15 @@ import HomeComponent from '../components/HomeComponent';
 import Admin from '../components/Admin';
 import NotFound from '../components/NotFound';
 import Registration from '../components/Registration';
+import Adminshowtimes from '../components/admin/adminshowtimes';
 
 const Home = () => (
         <div>
           <TopNavBar />
           <Switch>
             <Route exact path ="/" component={HomeComponent}/>
-            <Route exact path="/showtimes" component={Showtimes}/> 
+            <Route exact path="/showtimes" component={Showtimes}/>
+            <Route exact path="/admin/showtimes" component={Adminshowtimes}/>
             <Route exact path="/login" component={Login}/>
             <Route exact path ="/registration" component={Registration}/> 
             <Route exact path="/movies" component={Movies}/> 

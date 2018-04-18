@@ -19,14 +19,19 @@ const postgresCommands = {
   insert: `
     INSERT INTO movies (title, year, rated, released, runtime, genre, director, writer, actors, plot, language, country, poster, production)
     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14);`,
+  all: `
+    SELECT * FROM movies`,
   deleteAll: `
     TRUNCATE movies
   `,
-};
+  }
 
 const mongoCommands = {
   setup: (db) => {
     db.createCollection('movies');
+  },
+  all: (db) => {
+    db.collection('movies').find();
   }
 }
 

@@ -3,6 +3,7 @@ import bodyParser from 'body-parser';
 
 import { findOrCreateDB, query } from '../db';
 import Users from '../db/users';
+import Movies from '../db/movies';
 
 require('dotenv').config(); // Load .env files into process.env
 
@@ -36,6 +37,15 @@ app.post('/api/user', async (req, res) => {
     res.status(200).send({ message: 'User Created.' });
   } catch(error){
     res.status(404).send({ message: `Error creating user: ${error.message}` });
+  }
+});
+
+app.get('/api/movies', async (req, res) => {
+  try {
+    const movies = await query(Movies.all);
+    res.status(200).send({ movies: movies.rows });
+  } catch(error) {
+    res.status(404).send({ message: `Error fetching movies: ${error.message}` });
   }
 });
 

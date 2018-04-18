@@ -45,6 +45,11 @@ export default class TopNavBar extends Component {
               Registration
             </Link>
           </NavItem>
+          <NavItem eventKey={6}>
+            <Link to="/admin/showtimes">
+              Admin-ShowTimes
+            </Link>
+          </NavItem>
         </div>
       </Nav> 
     </Navbar>
