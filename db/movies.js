@@ -1,7 +1,8 @@
 const postgresCommands = {
   setup: `
     CREATE TABLE movies(
-      title TEXT PRIMARY KEY NOT NULL,
+      id SERIAL PRIMARY KEY,
+      title TEXT NOT NULL,
       year NUMERIC(4) NOT NULL,
       rated TEXT,
       released TEXT,
