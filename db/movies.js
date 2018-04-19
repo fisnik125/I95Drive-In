@@ -1,5 +1,5 @@
-module.exports = {
-  createTable: `
+const postgresCommands = {
+  setup: `
     CREATE TABLE movies(
       title TEXT PRIMARY KEY NOT NULL,
       year NUMERIC(4) NOT NULL,
@@ -18,6 +18,15 @@ module.exports = {
     );`,
   insert: `
     INSERT INTO movies (title, year, rated, released, runtime, genre, director, writer, actors, plot, language, country, poster, production)
-    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14);`
-  };
-  
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14);`,
+};
+
+const mongoCommands = {
+  setup: (db) => {
+    db.createCollection('movies');
+  }
+}
+
+const commands = process.env.MONGO === 'true' ? mongoCommands : postgresCommands;
+
+module.exports = commands;
