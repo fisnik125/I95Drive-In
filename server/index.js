@@ -15,7 +15,7 @@ app.use(express.static('client/build'));
 app.use(bodyParser.json());
 
 // Login
-app.get('/api/user', async (req, res) => {
+app.post('/api/session', async (req, res) => {
   const { email, password } = req.body;
 
   const result = await query(Users.login, [email, password]);
