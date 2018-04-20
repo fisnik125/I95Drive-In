@@ -14,12 +14,20 @@ let mongo = null;
  *
  * params: {[...String] | [...Integer]} An array of values used as positional
  *         parameters for the command.
+ *
+ * Returns: {[Object | null]} A result set. Coerces result into an array for
+ *          a standard return interface.
  */
-export const query = (command, params) => (
-  process.env.MONGO === 'true' ?
-    command(mongo, params) :
-    postgres.query(command, params)
-)
+export const query = async (command, params) => {
+  if (process.env.MONGO === 'true') {
+    const result = await command(mongo, params);
+    if (!result) return [];
+    return Array.isArray(result) ? result : [result];
+  } else {
+    const result = await postgres.query(command, params)
+    return result.rows;
+  }
+}
 
 export const findOrCreateDB = async (dbName) => {
   if (process.env.MONGO === "true") {

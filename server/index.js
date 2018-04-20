@@ -20,7 +20,7 @@ app.get('/api/user', async (req, res) => {
 
   const result = await query(Users.login, [email, password]);
 
-  if (result.rows.length === 0) {
+  if (result.length === 0) {
     res.status(400).send({ message: 'No user matched that email or password.' });
   } else {
     res.status(200).send({ message: 'User Authenticated.' });

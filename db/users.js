@@ -11,7 +11,15 @@ const postgresCommands = {
 const mongoCommands = {
   setup: (db) => {
     db.createCollection('users');
-  }
+  },
+  register: async (db, params) => {
+    const user = await db.collection('users').findOne({ email: params[0] });
+    if (user) throw new Error('User with that email already exists');
+    return await db.collection('users').insert({ email: params[0], password: params[1] });
+  },
+  login: async (db, params) => (
+    await db.collection('users').findOne({ email: params[0], password: params[1] })
+  ),
 }
 
 const commands = process.env.MONGO === 'true' ? mongoCommands : postgresCommands;
