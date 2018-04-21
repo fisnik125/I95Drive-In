@@ -15,12 +15,12 @@ app.use(express.static('client/build'));
 app.use(bodyParser.json());
 
 // Login
-app.get('/api/user', async (req, res) => {
+app.post('/api/session', async (req, res) => {
   const { email, password } = req.body;
 
   const result = await query(Users.login, [email, password]);
 
-  if (result.rows.length === 0) {
+  if (result.length === 0) {
     res.status(400).send({ message: 'No user matched that email or password.' });
   } else {
     res.status(200).send({ message: 'User Authenticated.' });

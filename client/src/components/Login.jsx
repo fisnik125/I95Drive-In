@@ -31,9 +31,9 @@ export default class Login extends Component  {
   }
 
   callApi = async (email, password) => {
-    const response = await fetch('/api/user', {
+    const response = await fetch('/api/session', {
       body: JSON.stringify({ email, password }),
-      method: 'GET',
+      method: 'POST',
       headers: { 'content-type': 'application/json' },
     });
     const body = await response.json();
