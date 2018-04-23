@@ -10,7 +10,7 @@ import HomeComponent from '../components/HomeComponent';
 import Admin from '../components/Admin';
 import NotFound from '../components/NotFound';
 import Registration from '../components/Registration';
-import Adminshowtimes from '../components/admin/adminshowtimes';
+import AdminShowtimes from '../components/admin/AdminShowtimes';
 
 const Home = () => (
         <div>
@@ -18,15 +18,15 @@ const Home = () => (
           <Switch>
             <Route exact path ="/" component={HomeComponent}/>
             <Route exact path="/showtimes" component={Showtimes}/>
-            <Route exact path="/admin/showtimes" component={Adminshowtimes}/>
+            <Route exact path="/admin/showtimes" component={AdminShowtimes}/>
             <Route exact path="/login" component={Login}/>
-            <Route exact path ="/registration" component={Registration}/> 
-            <Route exact path="/movies" component={Movies}/> 
+            <Route exact path ="/registration" component={Registration}/>
+            <Route exact path="/movies" component={Movies}/>
             <Route exact path="/admin" component={Admin}/>
             <Route component={NotFound} />
           </Switch>
         </div>
-     
+
 )
 
 

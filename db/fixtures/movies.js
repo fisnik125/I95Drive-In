@@ -14,11 +14,11 @@ const dbName = 'i95drivein';
   await mongo.collection('movies').remove({});
 
   movieFixtures.forEach(async movie => {
-    const { Title, Year, Rated, Released, Runtime, Genre, Director, Writer, Actors, Plot, Language, Country, Poster, Production } = movie;
+    const { title, year, rated, released, runtime, genre, director, writer, actors, plot, language, country, poster, production } = movie;
 
-    console.log('Inserting ' + Title);
+    console.log('Inserting ' + title);
 
-    await postgres.query(Movies.insert, [Title, Year, Rated, Released, Runtime, Genre, Director, Writer, Actors, Plot, Language, Country, Poster, Production]);
+    await postgres.query(Movies.insert, [title, year, rated, released, runtime, genre, director, writer, actors, plot, language, country, poster, production]);
     await mongo.collection('movies').insertOne(movie);
   });
 

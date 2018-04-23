@@ -29,10 +29,10 @@ const postgresCommands = {
 
 const mongoCommands = {
   setup: (db) => {
-    db.createCollection('movies');
+    return db.createCollection('movies');
   },
   all: (db) => {
-    db.collection('movies').find();
+    return db.collection('movies').find().toArray();
   }
 }
 

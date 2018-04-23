@@ -43,7 +43,7 @@ app.post('/api/user', async (req, res) => {
 app.get('/api/movies', async (req, res) => {
   try {
     const movies = await query(Movies.all);
-    res.status(200).send({ movies: movies.rows });
+    res.status(200).send({ movies });
   } catch(error) {
     res.status(404).send({ message: `Error fetching movies: ${error.message}` });
   }
