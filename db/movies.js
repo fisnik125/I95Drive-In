@@ -23,7 +23,7 @@ const postgresCommands = {
   all: `
     SELECT * FROM movies`,
   deleteAll: `
-    TRUNCATE movies
+    TRUNCATE movies CASCADE;
   `,
   }
 

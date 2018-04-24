@@ -3,6 +3,7 @@ import mongodb from 'mongodb';
 
 import Users from './users'
 import Movies from './movies';
+import Showtimes from './showtimes';
 
 const postgres = new Pool();
 let mongo = null;
@@ -30,10 +31,18 @@ export const query = async (command, params) => {
 }
 
 export const findOrCreateDB = async (dbName) => {
+  let newDB = false;
+
   if (process.env.MONGO === "true") {
-    createMongoDB(dbName);
+    newDB = await createMongoDB(dbName);
   } else {
-    createPostgresDB(dbName);
+    newDB = await createPostgresDB(dbName);
+  }
+
+  if (newDB) {
+    await query(Users.setup);
+    await query(Movies.setup);
+    await query(Showtimes.setup);
   }
 }
 
@@ -46,15 +55,13 @@ const createPostgresDB = async (dbName) => {
 
   if (count !== '0') {
     console.log('Found Postgres database. No action taken.');
-    return true;
+    return false;
   }
 
   console.log(`Database not found. Creating: ${dbName}`);
   await client.query(`CREATE DATABASE ${dbName}`);
   await client.end(); // close connection and start using 'i95drivein' implicitly
-
-  await query(Users.setup);
-  await query(Movies.setup);
+  return true;
 };
 
 const createMongoDB = async (dbName) => {
@@ -68,7 +75,4 @@ const createMongoDB = async (dbName) => {
   } catch(error) {
     console.error(`Error connecting to or creating Mongo db: ${dbName}`);
   }
-
-  await query(Users.setup);
-  await query(Movies.setup);
 }
