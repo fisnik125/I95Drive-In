@@ -7,7 +7,7 @@ const postgresCommands = {
       PRIMARY KEY(movie_id, showing)
     );`,
   forMovie: `
-    SELECT * FROM showtimes WHERE movie_id = $1)`,
+    SELECT * FROM showtimes WHERE movie_id = $1`,
   deleteAll: `
     TRUNCATE showtimes`,
   }
@@ -16,8 +16,8 @@ const mongoCommands = {
   setup: (db) => {
     return db.createCollection('showtimes');
   },
-  forMovie: (db, movieId) => {
-    return db.collection('showtimes').find({ movie_id: movieId }).toArray();
+  forMovie: (db, params) => {
+    return db.collection('showtimes').find({ movie_id: params[0] }).toArray();
   }
 }
 

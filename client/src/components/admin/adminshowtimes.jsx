@@ -1,7 +1,10 @@
 import React, { Component } from 'react';
 
 export default class AdminShowtimes extends Component {
-  state = { movies: [] }
+  state = {
+    movies: [],
+    showtimes: [],
+  }
 
 	componentWillMount() {
     this.fetchMovies()
@@ -34,9 +37,7 @@ export default class AdminShowtimes extends Component {
   changeMovie = (e) => {
     const id = e.target.value;
     this.fetchShowtimes(id)
-      .then(res => {
-        this.setState({ showtimes: res.showtimes });
-      })
+      .then(res => { this.setState({ showtimes: res.showtimes }); })
       .catch(err => console.error(err));
   }
 
@@ -53,6 +54,17 @@ export default class AdminShowtimes extends Component {
         			))
         		}
         	</select>
+
+          { this.state.showtimes.length &&
+            <select>
+              {this.state.showtimes.map((showtime, i) => (
+          			<option key={i} value={i}>
+          				{showtime.showing}
+          			</option>
+          			))
+          		}
+            </select>
+          }
         </form>
       </div>
     );

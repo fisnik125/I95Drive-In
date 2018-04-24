@@ -4,6 +4,7 @@ import bodyParser from 'body-parser';
 import { findOrCreateDB, query } from '../db';
 import Users from '../db/users';
 import Movies from '../db/movies';
+import Showtimes from '../db/showtimes';
 
 require('dotenv').config(); // Load .env files into process.env
 
@@ -46,6 +47,17 @@ app.get('/api/movies', async (req, res) => {
     res.status(200).send({ movies });
   } catch(error) {
     res.status(404).send({ message: `Error fetching movies: ${error.message}` });
+  }
+});
+
+app.get('/api/movies/:id/showtimes', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const showtimes = await query(Showtimes.forMovie, [id]);
+    res.status(200).send({ showtimes });
+  } catch(error) {
+    res.status(404).send({ message: `Error fetching showtimes: ${error.message}` });
   }
 });
 
