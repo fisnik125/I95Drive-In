@@ -2,14 +2,16 @@ const postgresCommands = {
   setup: `
     CREATE TABLE showtimes(
       movie_id SERIAL references movies(id) NOT NULL,
-      showing tsrange NOT NULL,
-      theatre NUMERIC NOT NULL,
-      PRIMARY KEY(movie_id, showing)
+      start_date TIMESTAMP NOT NULL,
+      end_date TIMESTAMP NOT NULL,
+      PRIMARY KEY(movie_id, start_time)
     );`,
   forMovie: `
     SELECT * FROM showtimes WHERE movie_id = $1`,
   deleteAll: `
     TRUNCATE showtimes`,
+  insert: `
+    INSERT INTO showtimes VALUES ($1, $2, $3)`,
   }
 
 const mongoCommands = {

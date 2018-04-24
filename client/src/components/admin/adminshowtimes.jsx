@@ -55,7 +55,7 @@ export default class AdminShowtimes extends Component {
         		}
         	</select>
 
-          { this.state.showtimes.length &&
+          { this.state.showtimes.length ?
             <select>
               {this.state.showtimes.map((showtime, i) => (
           			<option key={i} value={i}>
@@ -64,7 +64,7 @@ export default class AdminShowtimes extends Component {
           			))
           		}
             </select>
-          }
+           : null }
         </form>
       </div>
     );

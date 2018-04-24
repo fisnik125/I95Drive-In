@@ -6,7 +6,7 @@ const postgresCommands = {
       year NUMERIC(4) NOT NULL,
       rated TEXT,
       released TEXT,
-      runtime TEXT,
+      runtime NUMERIC NOT NULL,
       genre TEXT,
       director TEXT,
       writer TEXT,

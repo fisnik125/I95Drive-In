@@ -8,6 +8,7 @@
     "dev": "concurrently --kill-others-on-fail \"yarn build --watch\" \"yarn client\"",
     "dev:mongo": "MONGO=true yarn dev",
     "fixtures:load:movies": "node db/fixtures/movies.js",
+    "fixtures:load:showtimes": "node db/fixtures/showtimes.js",
     "test": "cd client && yarn test"
   },
   "dependencies": {
