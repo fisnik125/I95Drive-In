@@ -4,7 +4,7 @@ const postgresCommands = {
       movie_id SERIAL references movies(id) NOT NULL,
       start_date TIMESTAMP NOT NULL,
       end_date TIMESTAMP NOT NULL,
-      PRIMARY KEY(movie_id, start_time)
+      PRIMARY KEY(movie_id, start_date)
     );`,
   forMovie: `
     SELECT * FROM showtimes WHERE movie_id = $1`,

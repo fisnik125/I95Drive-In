@@ -21,7 +21,7 @@ const dbName = 'i95drivein';
 
     return Array(showtimes).fill().map(async showtime => {
       const startDate = randomDate();
-      const endDate = new Date(startDate.getTime() + (parseInt(movie.runtime) + 60 * 1000));
+      const endDate = new Date(startDate.getTime() + (parseInt(movie.runtime) * 60 * 1000));
 
       console.log(`Inserting Showtime for ${movie.title}: ${startDate} - ${endDate}`);
 

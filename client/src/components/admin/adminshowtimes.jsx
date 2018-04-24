@@ -1,8 +1,14 @@
 import React, { Component } from 'react';
+import BigCalendar from 'react-big-calendar';
+import moment from 'moment';
+import 'react-big-calendar/lib/css/react-big-calendar.css';
+
+BigCalendar.momentLocalizer(moment);
 
 export default class AdminShowtimes extends Component {
   state = {
     movies: [],
+    movie: {},
     showtimes: [],
   }
 
@@ -34,10 +40,26 @@ export default class AdminShowtimes extends Component {
     return body
   }
 
+  formatShowtimes = (showtimes) => {
+    return showtimes.map(({ start_date, end_date }, i) => ({
+      id: i,
+      start: new Date(start_date),
+      end: new Date(end_date),
+      title: this.state.movie.title,
+      allDay: false
+    }));
+  }
+
   changeMovie = (e) => {
-    const id = e.target.value;
+    const id = parseInt(e.target.value, 10);
+
+    this.setState({ movie: this.state.movies.find(movie => movie.id === id || movie._id === id ) })
+
     this.fetchShowtimes(id)
-      .then(res => { this.setState({ showtimes: res.showtimes }); })
+      .then(res => {
+        const showtimes = this.formatShowtimes(res.showtimes);
+        this.setState({ showtimes });
+      })
       .catch(err => console.error(err));
   }
 
@@ -56,14 +78,7 @@ export default class AdminShowtimes extends Component {
         	</select>
 
           { this.state.showtimes.length ?
-            <select>
-              {this.state.showtimes.map((showtime, i) => (
-          			<option key={i} value={i}>
-          				{showtime.showing}
-          			</option>
-          			))
-          		}
-            </select>
+            <BigCalendar defaultView="week" defaultDate={this.state.showtimes[0].start} events={this.state.showtimes} />
            : null }
         </form>
       </div>
