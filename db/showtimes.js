@@ -12,6 +12,8 @@ const postgresCommands = {
     TRUNCATE showtimes`,
   insert: `
     INSERT INTO showtimes VALUES ($1, $2, $3)`,
+  all: `
+    SELECT * FROM showtimes`
   }
 
 const mongoCommands = {
@@ -20,6 +22,9 @@ const mongoCommands = {
   },
   forMovie: (db, params) => {
     return db.collection('showtimes').find({ movie_id: params[0] }).toArray();
+  },
+  all: (db) => {
+    return db.collection('showtimes').find();
   }
 }
 

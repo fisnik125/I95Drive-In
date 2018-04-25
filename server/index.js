@@ -61,6 +61,15 @@ app.get('/api/movies/:id/showtimes', async (req, res) => {
   }
 });
 
+app.get('/api/showtimes', async (req, res) => {
+  try {
+    const showtimes = await query(Showtimes.all);
+    res.status(200).send({ showtimes });
+  } catch(error) {
+    res.status(404).send({ message: `Error fetching showtimes: ${error.message}` });
+  }
+});
+
 // All remaining requests return the React app, so it can handle routing.
 app.get('*', (req, res) => {
   res.sendFile('client/build/index.html', { root: '.' });
