@@ -3,6 +3,8 @@ import bodyParser from 'body-parser';
 
 import { findOrCreateDB, query } from '../db';
 import Users from '../db/users';
+import Movies from '../db/movies';
+import Showtimes from '../db/showtimes';
 
 require('dotenv').config(); // Load .env files into process.env
 
@@ -35,7 +37,59 @@ app.post('/api/user', async (req, res) => {
     await query(Users.register, [email, password]);
     res.status(200).send({ message: 'User Created.' });
   } catch(error){
-    res.status(404).send({ message: `Error creating user: ${error.message}` });
+    res.status(400).send({ message: `Error creating user: ${error.message}` });
+  }
+});
+
+app.get('/api/movies', async (req, res) => {
+  try {
+    const movies = await query(Movies.all);
+    res.status(200).send({ movies });
+  } catch(error) {
+    res.status(404).send({ message: `Error fetching movies: ${error.message}` });
+  }
+});
+
+app.get('/api/movies/:id/showtimes', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const showtimes = await query(Showtimes.forMovie, [id]);
+    res.status(200).send({ showtimes });
+  } catch(error) {
+    res.status(404).send({ message: `Error fetching showtimes: ${error.message}` });
+  }
+});
+
+app.get('/api/showtimes', async (req, res) => {
+  try {
+    const showtimes = await query(Showtimes.all);
+    res.status(200).send({ showtimes });
+  } catch(error) {
+    res.status(404).send({ message: `Error fetching showtimes: ${error.message}` });
+  }
+});
+
+app.post('/api/showtimes', async (req, res) => {
+  const { start, end, movieId } = req.body;
+
+  try {
+    const showtimes = await query(Showtimes.insert, [movieId, start, end]);
+    res.status(200).send({ message: 'Showtime Created.' });
+  } catch(error) {
+    res.status(400).send({ message: `Error creating showtime: ${error.message}` });
+  }
+});
+
+app.delete('/api/showtimes/:movieId', async (req, res) => {
+  const { movieId } = req.params;
+  const { start } = req.query;
+
+  try {
+    await query(Showtimes.delete, [movieId, start]);
+    res.status(200).send({ message: 'Showtime Deleted.' });
+  } catch(error) {
+    res.status(400).send({ message: `Error deleting showtime: ${error.message}` });
   }
 });
 

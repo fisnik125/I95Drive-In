@@ -1,11 +1,12 @@
 const postgresCommands = {
   setup: `
     CREATE TABLE movies(
-      title TEXT PRIMARY KEY NOT NULL,
+      id SERIAL PRIMARY KEY,
+      title TEXT NOT NULL,
       year NUMERIC(4) NOT NULL,
       rated TEXT,
       released TEXT,
-      runtime TEXT,
+      runtime NUMERIC NOT NULL,
       genre TEXT,
       director TEXT,
       writer TEXT,
@@ -19,14 +20,19 @@ const postgresCommands = {
   insert: `
     INSERT INTO movies (title, year, rated, released, runtime, genre, director, writer, actors, plot, language, country, poster, production)
     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14);`,
+  all: `
+    SELECT * FROM movies`,
   deleteAll: `
-    TRUNCATE movies
+    TRUNCATE movies CASCADE;
   `,
-};
+  }
 
 const mongoCommands = {
   setup: (db) => {
-    db.createCollection('movies');
+    return db.createCollection('movies');
+  },
+  all: (db) => {
+    return db.collection('movies').find().toArray();
   }
 }
 

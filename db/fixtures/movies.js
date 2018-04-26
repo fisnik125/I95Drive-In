@@ -3,6 +3,7 @@ const mongodb = require('mongodb');
 
 const movieFixtures = require('./movies.json');
 const Movies = require('../movies');
+const Showtimes = require('../showtimes');
 const dbName = 'i95drivein';
 
 (async () => {
@@ -10,15 +11,17 @@ const dbName = 'i95drivein';
   const db = await mongodb.MongoClient.connect(`mongodb://localhost:27017/${dbName}`);
   const mongo = db.db(dbName);
 
+  await postgres.query(Showtimes.deleteAll);
   await postgres.query(Movies.deleteAll);
+  await mongo.collection('showtimes').remove({});
   await mongo.collection('movies').remove({});
 
   movieFixtures.forEach(async movie => {
-    const { Title, Year, Rated, Released, Runtime, Genre, Director, Writer, Actors, Plot, Language, Country, Poster, Production } = movie;
+    const { title, year, rated, released, runtime, genre, director, writer, actors, plot, language, country, poster, production } = movie;
 
-    console.log('Inserting ' + Title);
+    console.log('Inserting ' + title);
 
-    await postgres.query(Movies.insert, [Title, Year, Rated, Released, Runtime, Genre, Director, Writer, Actors, Plot, Language, Country, Poster, Production]);
+    await postgres.query(Movies.insert, [title, year, rated, released, runtime, genre, director, writer, actors, plot, language, country, poster, production]);
     await mongo.collection('movies').insertOne(movie);
   });
 
