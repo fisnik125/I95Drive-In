@@ -37,7 +37,7 @@ app.post('/api/user', async (req, res) => {
     await query(Users.register, [email, password]);
     res.status(200).send({ message: 'User Created.' });
   } catch(error){
-    res.status(404).send({ message: `Error creating user: ${error.message}` });
+    res.status(400).send({ message: `Error creating user: ${error.message}` });
   }
 });
 
@@ -67,6 +67,17 @@ app.get('/api/showtimes', async (req, res) => {
     res.status(200).send({ showtimes });
   } catch(error) {
     res.status(404).send({ message: `Error fetching showtimes: ${error.message}` });
+  }
+});
+
+app.post('/api/showtimes', async (req, res) => {
+  const { start, end, movieId } = req.body;
+
+  try {
+    const showtimes = await query(Showtimes.insert, [movieId, start, end]);
+    res.status(200).send({ message: 'Showtime Created.' });
+  } catch(error) {
+    res.status(400).send({ message: `Error creating showtime: ${error.message}` });
   }
 });
 

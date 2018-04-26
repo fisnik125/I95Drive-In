@@ -12,7 +12,6 @@ export default class AdminShowtimes extends Component {
     movies: [],
     movie: {},
     showtimes: [],
-    defaultDate: new Date(), // The date that is shown in the calendar
   }
 
 	componentWillMount() {
@@ -29,7 +28,7 @@ export default class AdminShowtimes extends Component {
           return this.formatShowtimes(movie, movieShowTimes);
         });
 
-        this.setState({ showtimes: _.flatten(showtimes), defaultDate: new Date() });
+        this.setState({ showtimes: _.flatten(showtimes) });
       })
       .catch(err => console.error(err));
   }
@@ -91,11 +90,33 @@ export default class AdminShowtimes extends Component {
     this.fetchShowtimeForMovie(id)
       .then(res => {
         const showtimes = this.formatShowtimes(currentMovie, res.showtimes);
-        const defaultDate = _.get(showtimes, '0.start', new Date());
-
-        this.setState({ showtimes, defaultDate });
+        this.setState({ showtimes });
       })
       .catch(err => console.error(err));
+  }
+
+  createShowTime = async (start, end, movieId) => {
+    const response = await fetch('/api/showtimes', {
+      body: JSON.stringify({ start, end, movieId }),
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+    });
+    const body = await response.json();
+
+    if (response.status !== 200) throw Error(body.message);
+    return body
+  }
+
+  onSelectSlot = ({ start, end }) => {
+    const { movie: { title, id }, showtimes } = this.state;
+
+    this.createShowTime(start, end, id)
+      .then(res => {
+        const updatedShowtimes = showtimes;
+        updatedShowtimes.push({ start, end, title });
+        this.setState({ showtimes: updatedShowtimes });
+      })
+      .catch(err => { console.error(err); });
   }
 
   render() {
@@ -113,14 +134,14 @@ export default class AdminShowtimes extends Component {
         		}
         	</select>
 
-          { this.state.showtimes.length ?
-            <BigCalendar defaultView="week"
-                         selectable
-                         onNavigate={() => {}}
-                         date={this.state.defaultDate}
-                         views={['month', 'week']}
-                         events={this.state.showtimes} />
-          : <p>No Showtimes Available for the selected movie</p> }
+          { !this.state.showtimes.length && <p>No Showtimes for the selected movie</p> }
+
+          <BigCalendar defaultView="week"
+                       selectable={!_.isEmpty(this.state.movie)}
+                       defaultDate={new Date()}
+                       onSelectSlot={this.onSelectSlot}
+                       views={['month', 'week']}
+                       events={this.state.showtimes} />
         </form>
       </div>
     );

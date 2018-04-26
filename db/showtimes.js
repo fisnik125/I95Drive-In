@@ -25,6 +25,9 @@ const mongoCommands = {
   },
   all: (db) => {
     return db.collection('showtimes').find();
+  },
+  insert: (db, params) => {
+    return db.collection('showtimes').insert({ movieId: params[0], start: params[1], end: params[2] });
   }
 }
 
