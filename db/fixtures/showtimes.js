@@ -27,7 +27,8 @@ const dbName = 'i95drivein';
       console.log(`Inserting Showtime for ${movie.title}: ${startDate} - ${endDate}`);
 
       await postgres.query(Showtimes.insert, [movie.id, startDate, endDate]);
-      return await mongo.collection('showtimes').insertOne({ movieId: movie.id, startDate, endDate });
+      const mongoMovie = await mongo.collection('movies').findOne({ title: movie.title });
+      return await mongo.collection('showtimes').insertOne({ movieId: mongoMovie._id, startDate, endDate });
     });
   });
 

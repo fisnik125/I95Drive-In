@@ -1,3 +1,5 @@
+const mongo = require('mongodb');
+
 const postgresCommands = {
   setup: `
     CREATE TABLE showtimes(
@@ -23,16 +25,19 @@ const mongoCommands = {
     return db.createCollection('showtimes');
   },
   forMovie: (db, params) => {
-    return db.collection('showtimes').find({ movie_id: params[0] }).toArray();
+    return db.collection('showtimes').find({ movieId: mongo.ObjectId(params[0]) }).toArray();
   },
   all: (db) => {
-    return db.collection('showtimes').find();
+    return db.collection('showtimes').find().toArray();
   },
   insert: (db, params) => {
     return db.collection('showtimes').insert({ movieId: params[0], startDate: params[1], endDate: params[2] });
   },
   delete: (db, params) => {
-    return db.collection('showtimes').deleteOne({ movieId: params[0], startDate: params[1] });
+    const startDate = new Date(params[1]);
+    const movieId = mongo.ObjectId(params[0]);
+
+    return db.collection('showtimes').deleteOne({ movieId, startDate });
   }
 }
 

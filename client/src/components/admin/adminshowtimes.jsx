@@ -24,7 +24,10 @@ export default class AdminShowtimes extends Component {
       .then(this.fetchShowtimes)
       .then(res => {
         const showtimes = this.state.movies.map(movie => {
-          const movieShowTimes = res.showtimes.filter(st => st.movie_id === movie.id || st.movie_id === movie._id);
+          const movieShowTimes = res.showtimes.filter(st =>
+            (!_.isUndefined(movie.id) && st.movie_id === movie.id ) ||
+            (!_.isUndefined(movie._id) && st.movieId === movie._id));
+
           return this.formatShowtimes(movie, movieShowTimes);
         });
 
@@ -67,18 +70,19 @@ export default class AdminShowtimes extends Component {
   }
 
   formatShowtimes = (movie, showtimes) => {
-    return showtimes.map(({ start_date, end_date }) => ({
+    return showtimes.map(showtime => ({
       id: Math.floor((Math.random() * 10000000) + 1),
-      movieId: movie.id,
-      start: new Date(start_date),
-      end: new Date(end_date),
+      movieId: movie.id || movie._id,
+      start: new Date(showtime.start_date || showtime.startDate),
+      end: new Date(showtime.end_date || showtime.endDate),
       title: movie.title,
       allDay: false
     }));
   }
 
   changeMovie = (e) => {
-    const id = parseInt(e.target.value, 10);
+    const value = e.target.value;
+    const id = isNaN(value) ? value : parseInt(e.target.value, 10);
 
     if (!id) { // Selected the blank option
       this.fetchAllMoviesAndShowtimes();
@@ -109,7 +113,6 @@ export default class AdminShowtimes extends Component {
   }
 
   deleteShowTime = async (start, movieId) => {
-    console.log('start', start);
     const response = await fetch(`/api/showtimes/${movieId}?start=${start}`, {
       method: 'DELETE',
       headers: { 'content-type': 'application/json' },
@@ -121,12 +124,12 @@ export default class AdminShowtimes extends Component {
   }
 
   onSelectSlot = ({ start, end }) => {
-    const { movie: { title, id }, showtimes } = this.state;
+    const { movie: { title, id, _id }, showtimes } = this.state;
 
-    this.createShowTime(this.formatDate(start), this.formatDate(end), id)
+    this.createShowTime(this.formatDate(start), this.formatDate(end), (id || _id))
       .then(res => {
         const updatedShowtimes = showtimes;
-        updatedShowtimes.push({ id: showtimes.length + 1, movieId: id, start, end, title });
+        updatedShowtimes.push({ id: showtimes.length + 1, movieId: id || _id, start, end, title });
         this.setState({ showtimes: updatedShowtimes });
       })
       .catch(err => { console.error(err); });
