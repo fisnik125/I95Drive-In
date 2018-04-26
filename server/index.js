@@ -81,6 +81,18 @@ app.post('/api/showtimes', async (req, res) => {
   }
 });
 
+app.delete('/api/showtimes/:movieId', async (req, res) => {
+  const { movieId } = req.params;
+  const { start } = req.query;
+
+  try {
+    await query(Showtimes.delete, [movieId, start]);
+    res.status(200).send({ message: 'Showtime Deleted.' });
+  } catch(error) {
+    res.status(400).send({ message: `Error deleting showtime: ${error.message}` });
+  }
+});
+
 // All remaining requests return the React app, so it can handle routing.
 app.get('*', (req, res) => {
   res.sendFile('client/build/index.html', { root: '.' });

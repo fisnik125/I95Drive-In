@@ -10,6 +10,8 @@ const postgresCommands = {
     SELECT * FROM showtimes WHERE movie_id = $1`,
   deleteAll: `
     TRUNCATE showtimes`,
+  delete: `
+    DELETE FROM showtimes WHERE movie_id = $1 AND start_date = $2`,
   insert: `
     INSERT INTO showtimes VALUES ($1, $2, $3)`,
   all: `
@@ -27,7 +29,10 @@ const mongoCommands = {
     return db.collection('showtimes').find();
   },
   insert: (db, params) => {
-    return db.collection('showtimes').insert({ movieId: params[0], start: params[1], end: params[2] });
+    return db.collection('showtimes').insert({ movieId: params[0], startDate: params[1], endDate: params[2] });
+  },
+  delete: (db, params) => {
+    return db.collection('showtimes').deleteOne({ movieId: params[0], startDate: params[1] });
   }
 }
 

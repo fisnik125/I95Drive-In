@@ -67,8 +67,9 @@ export default class AdminShowtimes extends Component {
   }
 
   formatShowtimes = (movie, showtimes) => {
-    return showtimes.map(({ start_date, end_date }, i) => ({
-      id: i,
+    return showtimes.map(({ start_date, end_date }) => ({
+      id: Math.floor((Math.random() * 10000000) + 1),
+      movieId: movie.id,
       start: new Date(start_date),
       end: new Date(end_date),
       title: movie.title,
@@ -107,16 +108,43 @@ export default class AdminShowtimes extends Component {
     return body
   }
 
+  deleteShowTime = async (start, movieId) => {
+    console.log('start', start);
+    const response = await fetch(`/api/showtimes/${movieId}?start=${start}`, {
+      method: 'DELETE',
+      headers: { 'content-type': 'application/json' },
+    });
+    const body = await response.json();
+
+    if (response.status !== 200) throw Error(body.message);
+    return body
+  }
+
   onSelectSlot = ({ start, end }) => {
     const { movie: { title, id }, showtimes } = this.state;
 
-    this.createShowTime(start, end, id)
+    this.createShowTime(this.formatDate(start), this.formatDate(end), id)
       .then(res => {
         const updatedShowtimes = showtimes;
-        updatedShowtimes.push({ start, end, title });
+        updatedShowtimes.push({ id: showtimes.length + 1, movieId: id, start, end, title });
         this.setState({ showtimes: updatedShowtimes });
       })
       .catch(err => { console.error(err); });
+  }
+
+  formatDate = (date) => moment(date).format('YYYY-MM-DD HH:mm:ss');
+
+  onSelectEvent = ({ id, start, movieId }) => {
+    if (window.confirm("Do you want to delete this showtime?")) {
+
+      this.deleteShowTime(this.formatDate(start), movieId)
+        .then(res => {
+          alert('Showtime deleted!');
+          const remainingShowtimes = this.state.showtimes.filter(st => st.id !== id);
+          this.setState({ showtimes: remainingShowtimes });
+        })
+        .catch(err => { console.error(`Error deleting showtime: ${err}`); });
+    }
   }
 
   render() {
@@ -140,6 +168,7 @@ export default class AdminShowtimes extends Component {
                        selectable={!_.isEmpty(this.state.movie)}
                        defaultDate={new Date()}
                        onSelectSlot={this.onSelectSlot}
+                       onSelectEvent={this.onSelectEvent}
                        views={['month', 'week']}
                        events={this.state.showtimes} />
         </form>
