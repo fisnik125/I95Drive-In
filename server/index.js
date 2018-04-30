@@ -61,6 +61,47 @@ app.get('/api/movies/:id/showtimes', async (req, res) => {
   }
 });
 
+// Get a movie
+// Optional withShowtimes=true query param to perform join
+app.get('/api/movies/:id', async (req, res) => {
+  const { id } = req.params;
+  const { withShowtimes } = req.query;
+
+  const onlyMovie = async () => {
+    try {
+      const movie = await query(Movies.find, [id]);
+      res.status(200).send({ movie });
+    } catch(err) {
+      res.status(404).send({ message: `Error finding movie with id: ${id}. Error: ${err}` });
+    }
+  };
+
+  const movieAndShowtimes = async () => {
+    // Only executed for postgres to get movies / showtimes in separate keys
+    const formatResult = (rows) => {
+      const movie = Object.assign({}, rows[0], {
+        // Grab all values from the first row except these below values
+        movie_id: undefined, start_date: undefined, end_date: undefined,
+      });
+
+      const showtimes = rows.map(row => ({
+        movie_id: row.movieId, start_date: row.start_date, end_date: row.end_date })
+      );
+
+      return { movie, showtimes };
+    };
+
+    try {
+      const { movie, showtimes } = await query(Movies.findWithShowtimes, [id], formatResult);
+      res.status(200).send({ movie, showtimes });
+    } catch(err) {
+      res.status(404).send({ message: `Error finding movie with id: ${id}. Error: ${err}` });
+    }
+  }
+
+  withShowtimes ? movieAndShowtimes() : onlyMovie();
+});
+
 app.get('/api/showtimes', async (req, res) => {
   try {
     const showtimes = await query(Showtimes.all);
