@@ -112,10 +112,10 @@ app.get('/api/showtimes', async (req, res) => {
 });
 
 app.post('/api/showtimes', async (req, res) => {
-  const { start, end, movieId } = req.body;
+  const { start, end, movieId, price } = req.body;
 
   try {
-    const showtimes = await query(Showtimes.insert, [movieId, start, end]);
+    const showtimes = await query(Showtimes.insert, [movieId, start, end, price]);
     res.status(200).send({ message: 'Showtime Created.' });
   } catch(error) {
     res.status(400).send({ message: `Error creating showtime: ${error.message}` });
