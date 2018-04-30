@@ -1,8 +1,14 @@
 import React, { Component } from 'react';
+import moment from 'moment';
 
 import './MovieDetail.css';
 
 export default class MovieDetail extends Component {
+  state = {
+    movie: {},
+    showtimes: [],
+  }
+
   componentWillMount() {
     const { id } = this.props.match.params;
 
@@ -25,31 +31,49 @@ export default class MovieDetail extends Component {
   }
 
   render() {
+    const { movie, showtimes } = this.state;
+
     return (
       <div className='MovieDetail'>
+        <h1 className='MovieDetail__title'>{movie.title}</h1>
+        <span className='MovieDetail__director'>Directed by {movie.director}</span>
+        <span className='MovieDetail__genres'>{movie.genre}</span>
+
         <div className='MovieDetail__poster-plot'>
-          <img className='MovieDetail__poster' alt='Movie Poster'/>
+          <img className='MovieDetail__poster' src={movie.poster} alt='Movie Poster'/>
           <div className='MovieDetail__plot-actors'>
-            <p className='MovieDetail__plot'></p>
-            <p className='MovieDetail__actors'></p>
+            <p className='MovieDetail__plot'>{movie.plot}</p>
+            <p className='MovieDetail__actors'>{movie.actors}</p>
           </div>
         </div>
 
-        <div className='MovieDetail__rating-duration'>
-
+        <div className='MovieDetail__meta-info'>
+          <span className='MovieDetail__meta-info-rated'>{movie.rated}</span>
+          <span className='MovieDetail__meta-info-runtime'>{movie.runtime} minutes</span>
+          <span className='MovieDetail__meta-released'>Released: {movie.released}</span>
+          <span className='MovieDetail__meta-production'>{movie.production}</span>
         </div>
 
         <div className='MovieDetail__showtimes'>
-          <div className='MovieDetail__showtime'>
-            <div className='MovieDetail__showtime--left'>
-              <span className='MovieDetail__showtime-date'></span>
-              <span className='MovieDetail__showtime-time'></span>
-            </div>
+          {showtimes.map((showtime, i) => {
+            const { start_date, end_date, price } = showtime;
+            const formattedStartDate = moment(start_date).format("dddd, MMMM, h:mm:ss a");
+            const formattedEndDate = moment(end_date).format("dddd, MMMM, h:mm:ss a");
 
-            <div className='MovieDetail__showtime--right'>
-              <span className='MovieDetail__showtime-price'></span>
-            </div>
-          </div>
+            return (
+              <div className='MovieDetail__showtime' key={i}>
+                <div className='MovieDetail__showtime--left'>
+                  <span className='MovieDetail__showtime-start-date'>{formattedStartDate}</span>
+                  <span className='MovieDetail__showtime-end-date'> - {formattedEndDate}</span>
+                </div>
+
+                <div className='MovieDetail__showtime--right'>
+                  <span className='MovieDetail__showtime-price'>${price}</span>
+                </div>
+              </div>
+            );
+          })
+          }
         </div>
       </div>
     );
