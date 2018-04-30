@@ -1,0 +1,56 @@
+.MovieDetail__director,
+.MovieDetail__geninderes {
+  display: block;
+}
+
+.MovieDetail__poster-plot {
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 2rem;
+}
+
+.MovieDetail__plot {
+  font-size: 1.5em;
+}
+
+.MovieDetail__plot-actors {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.MovieDetail__actors {
+  margin-bottom: 0;
+}
+
+.MovieDetail__poster {
+  margin-right: 2rem;
+}
+
+.MovieDetail__meta-info-rated,
+.MovieDetail__meta-info-runtime,
+.MovieDetail__meta-info-released,
+.MovieDetail__meta-info-production {
+  display: block;
+}
+
+.MovieDetail__showtimes {
+  margin-top: 4rem;
+}
+
+.MovieDetail__showtime {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 1.5rem;
+  border: 1px solid #888;
+  border-radius: 5px;
+  box-shadow: .5rem .5rem #AAA;
+  margin-bottom: 2rem;
+}
+
+.MovieDetail__showtime:hover {
+  cursor: pointer;
+  box-shadow: .5rem .5rem #CCC;
+  background-color: #EEE;
+}

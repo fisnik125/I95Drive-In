@@ -43,22 +43,22 @@ export default class MovieDetail extends Component {
           <img className='MovieDetail__poster' src={movie.poster} alt='Movie Poster'/>
           <div className='MovieDetail__plot-actors'>
             <p className='MovieDetail__plot'>{movie.plot}</p>
-            <p className='MovieDetail__actors'>{movie.actors}</p>
+            <p className='MovieDetail__actors'>Starring: {movie.actors}</p>
           </div>
         </div>
 
         <div className='MovieDetail__meta-info'>
-          <span className='MovieDetail__meta-info-rated'>{movie.rated}</span>
+          <span className='MovieDetail__meta-info-rated'>Rated: {movie.rated}</span>
           <span className='MovieDetail__meta-info-runtime'>{movie.runtime} minutes</span>
-          <span className='MovieDetail__meta-released'>Released: {movie.released}</span>
-          <span className='MovieDetail__meta-production'>{movie.production}</span>
+          <span className='MovieDetail__meta-info-released'>Released: {movie.released}</span>
+          <span className='MovieDetail__meta-info-production'>{movie.production}</span>
         </div>
 
         <div className='MovieDetail__showtimes'>
           {showtimes.map((showtime, i) => {
             const { start_date, end_date, price } = showtime;
-            const formattedStartDate = moment(start_date).format("dddd, MMMM, h:mm:ss a");
-            const formattedEndDate = moment(end_date).format("dddd, MMMM, h:mm:ss a");
+            const formattedStartDate = moment(start_date).format("dddd, MMMM DD, h:mm:ss a");
+            const formattedEndDate = moment(end_date).format("MMMM DD, h:mm:ss a");
 
             return (
               <div className='MovieDetail__showtime' key={i}>
@@ -68,7 +68,7 @@ export default class MovieDetail extends Component {
                 </div>
 
                 <div className='MovieDetail__showtime--right'>
-                  <span className='MovieDetail__showtime-price'>${price}</span>
+                  <span className='MovieDetail__showtime-price'>${price} / person</span>
                 </div>
               </div>
             );
