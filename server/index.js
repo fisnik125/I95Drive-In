@@ -81,11 +81,11 @@ app.get('/api/movies/:id', async (req, res) => {
     const formatResult = (rows) => {
       const movie = Object.assign({}, rows[0], {
         // Grab all values from the first row except these below values
-        movie_id: undefined, start_date: undefined, end_date: undefined,
+        movie_id: undefined, start_date: undefined, end_date: undefined, price: undefined,
       });
 
       const showtimes = rows.map(row => ({
-        movie_id: row.movieId, start_date: row.start_date, end_date: row.end_date })
+        movie_id: row.movieId, start_date: row.start_date, end_date: row.end_date, price: row.price })
       );
 
       return { movie, showtimes };
