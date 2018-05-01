@@ -16,16 +16,20 @@ let mongo = null;
  * params: {[...String] | [...Integer]} An array of values used as positional
  *         parameters for the command.
  *
+ * callback: {Function} Optional. A function to call if provided that will receive
+ * the database result (Postgres will return the `rows` field) for data manipulation.
+ *
  * Returns: {[Object | null]} A result set. Coerces result into an array for
  *          a standard return interface.
  */
-export const query = async (command, params) => {
+export const query = async (command, params, callback) => {
   if (process.env.MONGO === 'true') {
-    const result = await command(mongo, params);
+    let result = await command(mongo, params);
     if (!result) return [];
     return Array.isArray(result) ? result : [result];
   } else {
-    const result = await postgres.query(command, params)
+    let result = await postgres.query(command, params);
+    if (callback) return callback(result.rows);
     return result.rows;
   }
 }

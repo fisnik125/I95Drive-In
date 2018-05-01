@@ -100,9 +100,9 @@ export default class AdminShowtimes extends Component {
       .catch(err => console.error(err));
   }
 
-  createShowTime = async (start, end, movieId) => {
+  createShowTime = async (start, end, movieId, price) => {
     const response = await fetch('/api/showtimes', {
-      body: JSON.stringify({ start, end, movieId }),
+      body: JSON.stringify({ start, end, movieId, price }),
       method: 'POST',
       headers: { 'content-type': 'application/json' },
     });
@@ -126,7 +126,9 @@ export default class AdminShowtimes extends Component {
   onSelectSlot = ({ start, end }) => {
     const { movie: { title, id, _id }, showtimes } = this.state;
 
-    this.createShowTime(this.formatDate(start), this.formatDate(end), (id || _id))
+    const price = window.prompt("Please enter a price for this showtime", 0.00);
+
+    this.createShowTime(this.formatDate(start), this.formatDate(end), (id || _id), price)
       .then(res => {
         const updatedShowtimes = showtimes;
         updatedShowtimes.push({ id: showtimes.length + 1, movieId: id || _id, start, end, title });

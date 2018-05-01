@@ -10,6 +10,7 @@ import MainNav from './components/MainNav';
 import Admin from './components/Admin';
 import NotFound from './components/NotFound';
 import Registration from './components/Registration';
+import MovieDetail from './components/MovieDetail';
 import AdminShowtimes from './components/admin/AdminShowtimes';
 
 import './index.css';
@@ -18,14 +19,17 @@ ReactDOM.render(
   <BrowserRouter>
     <div>
       <MainNav />
-      <Switch>
-        <Route exact path ="/" component={Showtimes}/>
-        <Route exact path="/admin/showtimes" component={AdminShowtimes}/>
-        <Route exact path="/login" component={Login}/>
-        <Route exact path ="/register" component={Registration}/>
-        <Route exact path="/admin" component={Admin}/>
-        <Route component={NotFound} />
-      </Switch>
+      <main className='container'>
+        <Switch>
+          <Route exact path="/" component={Showtimes}/>
+          <Route exact path="/admin/showtimes" component={AdminShowtimes}/>
+          <Route exact path="/login" component={Login}/>
+          <Route exact path ="/register" component={Registration}/>
+          <Route exact path="/admin" component={Admin}/>
+          <Route exact path="/movies/:id" component={MovieDetail}/>
+          <Route component={NotFound} />
+        </Switch>
+      </main>
     </div>
   </BrowserRouter>,
   document.getElementById('root')

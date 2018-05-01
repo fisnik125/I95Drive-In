@@ -1,3 +1,5 @@
+const mongo = require('mongodb');
+
 const postgresCommands = {
   setup: `
     CREATE TABLE movies(
@@ -25,6 +27,14 @@ const postgresCommands = {
   deleteAll: `
     TRUNCATE movies CASCADE;
   `,
+  find: `
+    SELECT * FROM movies WHERE id = $1
+  `,
+  findWithShowtimes: `
+    SELECT * FROM movies
+    INNER JOIN showtimes ON movies.id = showtimes.movie_id
+    WHERE id = $1
+  `,
   }
 
 const mongoCommands = {
@@ -33,6 +43,28 @@ const mongoCommands = {
   },
   all: (db) => {
     return db.collection('movies').find().toArray();
+  },
+  find: (db, params) => {
+    const movieId = mongo.ObjectId(params[0]);
+    return db.collection('movies').find({ _id: movieId }).toArray();
+  },
+  findWithShowtimes: async (db, params) => {
+    const movieId = mongo.ObjectId(params[0]);
+    const result = await db.collection('movies').aggregate([{
+      $match: { _id: movieId },
+    }, {
+      $lookup: {
+        from: 'showtimes',
+        localField: '_id',
+        foreignField: 'movieId',
+        as: 'showtimes'
+      }
+    }]).toArray();
+
+    return {
+      movie: Object.assign({}, result[0], { showtimes: undefined }),
+      showtimes: result[0].showtimes,
+    };
   }
 }
 

@@ -23,12 +23,13 @@ const dbName = 'i95drivein';
       const startDate = randomDate();
       startDate.setMilliseconds(0);
       const endDate = new Date(startDate.getTime() + (parseInt(movie.runtime) * 60 * 1000));
+      const price = Math.floor(Math.random() * (10 * 100 - 1 * 100) + 1 * 100) / (1 * 100);
 
-      console.log(`Inserting Showtime for ${movie.title}: ${startDate} - ${endDate}`);
+      console.log(`Inserting Showtime for ${movie.title}: ${startDate} - ${endDate}. Price: ${price}`);
 
-      await postgres.query(Showtimes.insert, [movie.id, startDate, endDate]);
+      await postgres.query(Showtimes.insert, [movie.id, startDate, endDate, price]);
       const mongoMovie = await mongo.collection('movies').findOne({ title: movie.title });
-      return await mongo.collection('showtimes').insertOne({ movieId: mongoMovie._id, startDate, endDate });
+      return await mongo.collection('showtimes').insertOne({ movieId: mongoMovie._id, startDate, endDate, price });
     });
   });
 
