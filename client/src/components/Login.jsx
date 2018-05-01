@@ -24,7 +24,7 @@ class Login extends Component  {
     const { email, password } = this.state;
     const { onLogin, history, location } = this.props;
 
-   ev.preventDefault();
+    ev.preventDefault();
 
     this.callApi(email, password)
       .then(res => { onLogin(email) })
