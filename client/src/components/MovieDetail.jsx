@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import moment from 'moment';
 import Modal from 'react-modal';
 import Alert from 'react-s-alert';
+import { connect } from 'react-redux';
+import { withRouter } from 'react-router';
 
 import './MovieDetail.css';
 
@@ -12,7 +14,10 @@ class Showtime extends Component {
   }
 
   toggleModal = () => {
-    this.setState(({ modalIsOpen }) => ({ modalIsOpen: !modalIsOpen }));
+    const { user, login } = this.props;
+
+    if (!user) login();
+    else this.setState(({ modalIsOpen }) => ({ modalIsOpen: !modalIsOpen }));
   }
 
   updateTotal = (ev) => {
@@ -26,6 +31,7 @@ class Showtime extends Component {
       body: JSON.stringify({ transactionableId: id, quantity, transactionableType: 'showtimes' }),
       method: 'POST',
       headers: { 'content-type': 'application/json' },
+      credentials: 'include',
     });
     const body = await response.json();
 
@@ -66,13 +72,13 @@ class Showtime extends Component {
           <input value={quantity} onChange={this.updateTotal} type='number' min='1'/>
           <span> = ${price * quantity}</span>
         </div>
-        <button onClick={this.purchaseShowtimes}>Purchase</button>
+        <button className='MovieDetail__modal-container-button' onClick={this.purchaseShowtimes}>Purchase</button>
       </Modal>
     ];
   }
 }
 
-export default class MovieDetail extends Component {
+class MovieDetail extends Component {
   state = {
     movie: {},
     showtimes: [],
@@ -101,6 +107,7 @@ export default class MovieDetail extends Component {
 
   render() {
     const { movie, showtimes } = this.state;
+    const { user, history, location } = this.props;
 
     return (
       <div className='MovieDetail'>
@@ -124,13 +131,16 @@ export default class MovieDetail extends Component {
         </div>
 
         <div className='MovieDetail__showtimes'>
-          {showtimes.map((showtime, i) => {
+          { showtimes.map((showtime, i) => {
             const { showtime_id, _id, start_date, end_date, startDate, endDate, price } = showtime;
             const formattedStartDate = moment(start_date || startDate).format("dddd, MMMM DD, h:mm:ss a");
             const formattedEndDate = moment(end_date || endDate).format("MMMM DD, h:mm:ss a");
+            const login = () => history.push(`/login?redirect=${location.pathname}`);
 
             return (
               <Showtime key={i}
+                        user={user}
+                        login={login}
                         id={showtime_id || _id}
                         startDate={formattedStartDate}
                         endDate={formattedEndDate}
@@ -143,3 +153,16 @@ export default class MovieDetail extends Component {
     );
   }
 }
+
+const mapStateToProps = (state) => ({
+  user: state.user,
+});
+
+const mapDispatchToProps = (dispatch) => ({});
+
+export default withRouter(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps,
+  )(MovieDetail)
+);

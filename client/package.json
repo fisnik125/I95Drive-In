@@ -11,10 +11,12 @@
     "react-dom": "^16.2.0",
     "react-jsx": "^1.0.0",
     "react-modal": "^3.4.4",
+    "react-redux": "^5.0.7",
     "react-router": "^4.2.0",
     "react-router-dom": "^4.2.2",
     "react-s-alert": "^1.4.1",
-    "react-scripts": "1.1.4"
+    "react-scripts": "1.1.4",
+    "redux": "^4.0.0"
   },
   "scripts": {
     "start": "react-scripts start",

@@ -1,5 +1,6 @@
 import express from 'express';
 import bodyParser from 'body-parser';
+import session from 'express-session';
 
 import { findOrCreateDB, query } from '../db';
 import Users from '../db/users';
@@ -13,9 +14,21 @@ const { PORT, PGDATABASE } = process.env
 const app = express();
 const port = PORT || 8080;
 
+app.set('trust proxy', 1); // trust first proxy
+
 // Priority serve any static files.
 app.use(express.static('client/build'));
+
 app.use(bodyParser.json());
+app.use(session({
+  secret: 'keyboard cat',
+  resave: true,
+  saveUninitialized: false,
+  cookie: {
+    secure: false,
+    name: 'i95drivein',
+  },
+}));
 
 // Login
 app.post('/api/session', async (req, res) => {
@@ -26,7 +39,25 @@ app.post('/api/session', async (req, res) => {
   if (result.length === 0) {
     res.status(400).send({ message: 'No user matched that email or password.' });
   } else {
+    req.session.user = email;
     res.status(200).send({ message: 'User Authenticated.' });
+  }
+});
+
+app.delete('/api/session', async (req, res) => {
+  req.session.destroy(err => {
+    if (err) console.error(err);
+    res.status(200).send({ message: 'User logged out.' });
+  });
+});
+
+app.get('/api/session', async (req, res) => {
+  const { user } = req.session;
+
+  if (user) {
+    res.status(200).send({ message: 'Already Logged In.', user });
+  } else {
+    res.status(404).send({ message: 'User not logged in.' });
   }
 });
 
@@ -137,10 +168,10 @@ app.delete('/api/showtimes/:movieId', async (req, res) => {
 
 app.post('/api/transactions', async (req, res) => {
   const { transactionableId, transactionableType, quantity } = req.body;
-  const userEmail = 'blahblah@example.com'; // TODO: Fix me
+  const { user } = req.session;
 
   try {
-    await query(Transactions.insert, [userEmail, parseInt(transactionableId, 10), transactionableType, quantity]);
+    await query(Transactions.insert, [user, parseInt(transactionableId, 10), transactionableType, quantity]);
     res.status(200).send({ message: 'Transaction Created.' });
   } catch(error) {
     res.status(400).send({ message: `Error creating transaction: ${error.message}` });

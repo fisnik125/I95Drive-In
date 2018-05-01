@@ -1,8 +1,12 @@
 import React, { Component } from 'react';
 import { FormGroup, FormControl, ControlLabel, Button } from 'react-bootstrap';
+import { connect } from 'react-redux';
+import { withRouter } from 'react-router';
+import _ from 'lodash';
+
 import '../components/Login.css';
 
-export default class Login extends Component  {
+class Login extends Component  {
   constructor(props) {
     super(props);
 
@@ -12,21 +16,24 @@ export default class Login extends Component  {
     };
   }
 
-  validateForm() {
-    return ; // this.state.email.length > 0 && this.state.password.length > 0;
-  }
-
   handleChange = ({ target: { value, id } }) => {
     this.setState({ [id]: value });
   }
 
   handleSubmit = (ev) => {
     const { email, password } = this.state;
+    const { onLogin, history, location } = this.props;
 
-    ev.preventDefault();
+   ev.preventDefault();
 
     this.callApi(email, password)
-      .then(res => console.log(res))
+      .then(res => { onLogin(email) })
+      .then(() => {
+        let redirect = location.search.match(/redirect=([^&]*)/);
+        redirect = _.get(redirect, '1', undefined);
+
+        redirect ? history.push(redirect) : history.push('/');
+      })
       .catch(err => console.error(err));
   }
 
@@ -35,6 +42,7 @@ export default class Login extends Component  {
       body: JSON.stringify({ email, password }),
       method: 'POST',
       headers: { 'content-type': 'application/json' },
+      credentials: 'include',
     });
     const body = await response.json();
 
@@ -79,3 +87,16 @@ export default class Login extends Component  {
     );
   }
 }
+
+const mapStateToProps = (state) => ({});
+
+const mapDispatchToProps = (dispatch) => ({
+  onLogin: (email) => { dispatch({ type: 'LOGIN', email }); }
+});
+
+export default withRouter(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps,
+  )(Login)
+);
