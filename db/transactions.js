@@ -20,7 +20,7 @@ const mongoCommands = {
   },
   insert: (db, params) => {
     const userEmail = params[0];
-    const transactionableId = params[1];
+    const transactionableId = mongo.ObjectId(params[1]);
     const transactionableType = params[2];
     const quantity = params[3]
 

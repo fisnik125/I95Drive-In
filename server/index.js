@@ -24,9 +24,10 @@ app.use(session({
   secret: 'keyboard cat',
   resave: true,
   saveUninitialized: false,
+  name: 'i95drivein',
   cookie: {
     secure: false,
-    name: 'i95drivein',
+    maxAge: 1000 * 60 * 60 * 24 * 7, // 1 week
   },
 }));
 
@@ -167,14 +168,21 @@ app.delete('/api/showtimes/:movieId', async (req, res) => {
 });
 
 app.post('/api/transactions', async (req, res) => {
-  const { transactionableId, transactionableType, quantity } = req.body;
+  const { transactionableType, quantity } = req.body;
   const { user } = req.session;
+  let { transactionableId } = req.body;
 
-  try {
-    await query(Transactions.insert, [user, parseInt(transactionableId, 10), transactionableType, quantity]);
-    res.status(200).send({ message: 'Transaction Created.' });
-  } catch(error) {
-    res.status(400).send({ message: `Error creating transaction: ${error.message}` });
+  if (!isNaN(transactionableId)) transactionableId = parseInt(transactionableId, 10);
+
+  if (!user) {
+    res.status(400).send({ message: 'User not logged in' });
+  } else {
+    try {
+      await query(Transactions.insert, [user, transactionableId, transactionableType, quantity]);
+      res.status(200).send({ message: 'Transaction Created.' });
+    } catch(error) {
+      res.status(400).send({ message: `Error creating transaction: ${error.message}` });
+    }
   }
 });
 
