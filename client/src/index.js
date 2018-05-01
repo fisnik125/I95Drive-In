@@ -15,6 +15,7 @@ import NotFound from './components/NotFound';
 import Registration from './components/Registration';
 import MovieDetail from './components/MovieDetail';
 import AdminShowtimes from './components/admin/AdminShowtimes';
+import Home from './components/Home';
 
 import userReducer from './reducers/user';
 
