@@ -1,10 +1,12 @@
 import express from 'express';
 import bodyParser from 'body-parser';
+import session from 'express-session';
 
 import { findOrCreateDB, query } from '../db';
 import Users from '../db/users';
 import Movies from '../db/movies';
 import Showtimes from '../db/showtimes';
+import Transactions from '../db/transactions';
 
 require('dotenv').config(); // Load .env files into process.env
 
@@ -12,9 +14,22 @@ const { PORT, PGDATABASE } = process.env
 const app = express();
 const port = PORT || 8080;
 
+app.set('trust proxy', 1); // trust first proxy
+
 // Priority serve any static files.
 app.use(express.static('client/build'));
+
 app.use(bodyParser.json());
+app.use(session({
+  secret: 'keyboard cat',
+  resave: true,
+  saveUninitialized: false,
+  name: 'i95drivein',
+  cookie: {
+    secure: false,
+    maxAge: 1000 * 60 * 60 * 24 * 7, // 1 week
+  },
+}));
 
 // Login
 app.post('/api/session', async (req, res) => {
@@ -25,7 +40,25 @@ app.post('/api/session', async (req, res) => {
   if (result.length === 0) {
     res.status(400).send({ message: 'No user matched that email or password.' });
   } else {
+    req.session.user = email;
     res.status(200).send({ message: 'User Authenticated.' });
+  }
+});
+
+app.delete('/api/session', async (req, res) => {
+  req.session.destroy(err => {
+    if (err) console.error(err);
+    res.status(200).send({ message: 'User logged out.' });
+  });
+});
+
+app.get('/api/session', async (req, res) => {
+  const { user } = req.session;
+
+  if (user) {
+    res.status(200).send({ message: 'Already Logged In.', user });
+  } else {
+    res.status(404).send({ message: 'User not logged in.' });
   }
 });
 
@@ -85,7 +118,7 @@ app.get('/api/movies/:id', async (req, res) => {
       });
 
       const showtimes = rows.map(row => ({
-        movie_id: row.movieId, start_date: row.start_date, end_date: row.end_date, price: row.price })
+        showtime_id: row.showtime_id, movie_id: row.movie_id, start_date: row.start_date, end_date: row.end_date, price: row.price })
       );
 
       return [{ movie, showtimes }];
@@ -131,6 +164,25 @@ app.delete('/api/showtimes/:movieId', async (req, res) => {
     res.status(200).send({ message: 'Showtime Deleted.' });
   } catch(error) {
     res.status(400).send({ message: `Error deleting showtime: ${error.message}` });
+  }
+});
+
+app.post('/api/transactions', async (req, res) => {
+  const { transactionableType, quantity } = req.body;
+  const { user } = req.session;
+  let { transactionableId } = req.body;
+
+  if (!isNaN(transactionableId)) transactionableId = parseInt(transactionableId, 10);
+
+  if (!user) {
+    res.status(400).send({ message: 'User not logged in' });
+  } else {
+    try {
+      await query(Transactions.insert, [user, transactionableId, transactionableType, quantity]);
+      res.status(200).send({ message: 'Transaction Created.' });
+    } catch(error) {
+      res.status(400).send({ message: `Error creating transaction: ${error.message}` });
+    }
   }
 });
 

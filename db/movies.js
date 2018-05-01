@@ -31,9 +31,9 @@ const postgresCommands = {
     SELECT * FROM movies WHERE id = $1
   `,
   findWithShowtimes: `
-    SELECT * FROM movies
+    SELECT *, showtimes.id as showtime_id FROM movies
     INNER JOIN showtimes ON movies.id = showtimes.movie_id
-    WHERE id = $1
+    WHERE movies.id = $1
   `,
   }
 

@@ -3,11 +3,11 @@ const mongo = require('mongodb');
 const postgresCommands = {
   setup: `
     CREATE TABLE showtimes(
+      id SERIAL PRIMARY KEY NOT NULL,
       movie_id SERIAL references movies(id) NOT NULL,
       start_date TIMESTAMP NOT NULL,
       end_date TIMESTAMP NOT NULL,
-      price NUMERIC(4,2) NOT NULL,
-      PRIMARY KEY(movie_id, start_date)
+      price NUMERIC(4,2) NOT NULL
     );`,
   forMovie: `
     SELECT * FROM showtimes WHERE movie_id = $1`,
@@ -16,7 +16,8 @@ const postgresCommands = {
   delete: `
     DELETE FROM showtimes WHERE movie_id = $1 AND start_date = $2`,
   insert: `
-    INSERT INTO showtimes VALUES ($1, $2, $3, $4)`,
+    INSERT INTO showtimes (movie_id, start_date, end_date, price)
+    VALUES ($1, $2, $3, $4)`,
   all: `
     SELECT * FROM showtimes`
   }

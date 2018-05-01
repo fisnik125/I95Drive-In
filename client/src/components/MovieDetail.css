@@ -54,3 +54,19 @@
   box-shadow: .5rem .5rem #CCC;
   background-color: #EEE;
 }
+
+.MovieDetail__modal-container {
+  display: flex;
+  justify-content: space-around;
+  font-size: 1.3em;
+}
+
+.MovieDetail__modal-container-button {
+  background-color: #6ca3fc;
+  color: white;
+  padding: 1rem;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+}
