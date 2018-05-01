@@ -45,7 +45,7 @@ class MainNav extends Component {
     const { onLogout } = this.props;
 
     this.deleteSession()
-      .then(res => { console.log('res', res); onLogout(); })
+      .then(res => { onLogout(); })
       .catch(err => { console.error(err); });
   }
 
