@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import moment from 'moment';
 import Modal from 'react-modal';
+import Alert from 'react-s-alert';
 
 import './MovieDetail.css';
 
@@ -20,9 +21,9 @@ class Showtime extends Component {
     this.setState({ quantity: value });
   }
 
-  createTransaction = async ({ id, quantity, movieId, startDate }) => {
-    const response = await fetch('/api/showtimes', {
-      body: JSON.stringify({ id, quantity }),
+  createTransaction = async ({ id, quantity }) => {
+    const response = await fetch('/api/transactions', {
+      body: JSON.stringify({ transactionableId: id, quantity, transactionableType: 'showtimes' }),
       method: 'POST',
       headers: { 'content-type': 'application/json' },
     });
@@ -34,9 +35,10 @@ class Showtime extends Component {
 
   purchaseShowtimes = () => {
     const { quantity } = this.state;
-    const { movieId, startDate } = this.props;
+    const { id } = this.props;
 
-    this.createTransaction({ id, quantity, movieId, startDate })
+    this.createTransaction({ id, quantity })
+      .then(() => { Alert.success('Movie Ticket(s) Purchased.'); })
       .then(this.toggleModal)
       .catch(err => { console.error('Error creating transaction: ', err); });
   }
@@ -123,13 +125,13 @@ export default class MovieDetail extends Component {
 
         <div className='MovieDetail__showtimes'>
           {showtimes.map((showtime, i) => {
-            const { start_date, end_date, startDate, endDate, price } = showtime;
+            const { showtime_id, _id, start_date, end_date, startDate, endDate, price } = showtime;
             const formattedStartDate = moment(start_date || startDate).format("dddd, MMMM DD, h:mm:ss a");
             const formattedEndDate = moment(end_date || endDate).format("MMMM DD, h:mm:ss a");
 
             return (
               <Showtime key={i}
-                        movieId={movie.id || movie._id}
+                        id={showtime_id || _id}
                         startDate={formattedStartDate}
                         endDate={formattedEndDate}
                         price={price} />

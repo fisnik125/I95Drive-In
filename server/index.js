@@ -5,6 +5,7 @@ import { findOrCreateDB, query } from '../db';
 import Users from '../db/users';
 import Movies from '../db/movies';
 import Showtimes from '../db/showtimes';
+import Transactions from '../db/transactions';
 
 require('dotenv').config(); // Load .env files into process.env
 
@@ -85,7 +86,7 @@ app.get('/api/movies/:id', async (req, res) => {
       });
 
       const showtimes = rows.map(row => ({
-        movie_id: row.movieId, start_date: row.start_date, end_date: row.end_date, price: row.price })
+        showtime_id: row.showtime_id, movie_id: row.movie_id, start_date: row.start_date, end_date: row.end_date, price: row.price })
       );
 
       return [{ movie, showtimes }];
@@ -131,6 +132,18 @@ app.delete('/api/showtimes/:movieId', async (req, res) => {
     res.status(200).send({ message: 'Showtime Deleted.' });
   } catch(error) {
     res.status(400).send({ message: `Error deleting showtime: ${error.message}` });
+  }
+});
+
+app.post('/api/transactions', async (req, res) => {
+  const { transactionableId, transactionableType, quantity } = req.body;
+  const userEmail = 'blahblah@example.com'; // TODO: Fix me
+
+  try {
+    await query(Transactions.insert, [userEmail, parseInt(transactionableId, 10), transactionableType, quantity]);
+    res.status(200).send({ message: 'Transaction Created.' });
+  } catch(error) {
+    res.status(400).send({ message: `Error creating transaction: ${error.message}` });
   }
 });
 

@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import registerServiceWorker from './registerServiceWorker';
 import { BrowserRouter } from 'react-router-dom';
 import { Switch, Route } from  'react-router-dom';
+import Alert from 'react-s-alert';
 
 import Showtimes from './components/Showtimes';
 import Login from  './components/Login';
@@ -14,6 +15,8 @@ import MovieDetail from './components/MovieDetail';
 import AdminShowtimes from './components/admin/AdminShowtimes';
 
 import './index.css';
+import 'react-s-alert/dist/s-alert-default.css';
+import 'react-s-alert/dist/s-alert-css-effects/stackslide.css';
 
 ReactDOM.render(
   <BrowserRouter>
@@ -29,6 +32,7 @@ ReactDOM.render(
           <Route exact path="/movies/:id" component={MovieDetail}/>
           <Route component={NotFound} />
         </Switch>
+        <Alert effect='stackslide' position='top' timeout={2000} />
       </main>
     </div>
   </BrowserRouter>,
