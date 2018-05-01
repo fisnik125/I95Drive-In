@@ -15,7 +15,7 @@ import NotFound from './components/NotFound';
 import Registration from './components/Registration';
 import MovieDetail from './components/MovieDetail';
 import AdminShowtimes from './components/admin/AdminShowtimes';
-import Home from './components/Home';
+import MovieCollection from './components/MovieCollection';
 
 import userReducer from './reducers/user';
 
@@ -28,21 +28,19 @@ const store = createStore(userReducer);
 ReactDOM.render(
   <Provider store={store}>
     <BrowserRouter>
-      <div>
-        <MainNav />
+      <MainNav />
         <main className='container'>
-          <Switch>
-            <Route exact path="/" component={Showtimes}/>
-            <Route exact path="/admin/showtimes" component={AdminShowtimes}/>
-            <Route exact path="/login" component={Login}/>
-            <Route exact path ="/register" component={Registration}/>
-            <Route exact path="/admin" component={Admin}/>
-            <Route exact path="/movies/:id" component={MovieDetail}/>
-            <Route component={NotFound} />
-          </Switch>
-          <Alert effect='stackslide' position='top' timeout={2000} />
-        </main>
-      </div>
+        <Switch>
+          <Route exact path="/" component={MovieCollection}/>
+          <Route exact path="/admin/showtimes" component={AdminShowtimes}/>
+          <Route exact path="/login" component={Login}/>
+          <Route exact path ="/register" component={Registration}/>
+          <Route exact path="/admin" component={Admin}/>
+          <Route exact path="/movies/:id" component={MovieDetail}/>
+          <Route component={NotFound} />
+        </Switch>
+        <Alert effect='stackslide' position='top' timeout={2000} />
+      </main>
     </BrowserRouter>
   </Provider>,
   document.getElementById('root')

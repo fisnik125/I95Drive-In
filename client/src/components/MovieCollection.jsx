@@ -2,16 +2,8 @@ import React, { Component } from 'react';
 
 class MovieCollection extends Component {
 	state = {
-		movies: [
-			// {id: 1, title:'12 Angry Men', poster:'https://ia.media-imdb.com/images/M/MV5BMWU4N2FjNzYtNTVkNC00NzQ0LTg0MjAtYTJlMjFhNGUxZDFmXkEyXkFqcGdeQXVyNjc1NTYyMjg@._V1_SX300.jpg'},
-			// {id: 2, title:'A Beautiful Mind', poster:'https://images-na.ssl-images-amazon.com/images/M/MV5BMzcwYWFkYzktZjAzNC00OGY1LWI4YTgtNzc5MzVjMDVmNjY0XkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_SX300.jpg'},
-			// {id: 3, title: 'Alien Alien', poster:'https://images-na.ssl-images-amazon.com/images/M/MV5BNDNhN2IxZWItNGEwYS00ZDNhLThiM2UtODU3NWJlZjBkYjQxXkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_SX300.jpg'}
-		],
-		filteredMovies: [
-			// {id: 1, title:'12 Angry Men', poster:'https://ia.media-imdb.com/images/M/MV5BMWU4N2FjNzYtNTVkNC00NzQ0LTg0MjAtYTJlMjFhNGUxZDFmXkEyXkFqcGdeQXVyNjc1NTYyMjg@._V1_SX300.jpg'},
-			// {id: 2, title:'A Beautiful Mind', poster:'https://images-na.ssl-images-amazon.com/images/M/MV5BMzcwYWFkYzktZjAzNC00OGY1LWI4YTgtNzc5MzVjMDVmNjY0XkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_SX300.jpg'},
-			// {id: 3, title: 'Alien Alien', poster:'https://images-na.ssl-images-amazon.com/images/M/MV5BNDNhN2IxZWItNGEwYS00ZDNhLThiM2UtODU3NWJlZjBkYjQxXkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_SX300.jpg'}
-		],
+		movies: [],
+		filteredMovies: [],
 		movie: {},
 		text: []
 	}
@@ -20,7 +12,6 @@ class MovieCollection extends Component {
 		this.fetchMovies()
     .then(res => { this.setState({ movies: res.movies }); })
     .catch(err => console.error(err));
-		// this.searchMovies();
 		}
 
 	fetchMovies = async () => {
@@ -35,14 +26,6 @@ class MovieCollection extends Component {
     return body
   }
 
-	// const filterItems = (query) => {
-  // return movies.filter((movie) =>
-  //   movie.toLowerCase().indexOf(query.toLowerCase()) > -1
-	//   );
-	// }
-	//
-
-
 	filterMovies = (e) => {
 		const value = e.target.value.toLowerCase();
 		console.log(value);
@@ -55,12 +38,13 @@ class MovieCollection extends Component {
     return (
       <div className="header">
         <h1> Choose your Movie </h1>
-        <input onChange={this.filterMovies}></input>
+        <input className="movieSelector" onChange={this.filterMovies}></input>
         <div className="row">
         {this.state.filteredMovies.map(movie => (
-    				<div className="col-md-4 col-sm-4 col-lg-4" key={movie.id || movie._id} value={movie.id || movie._id}>
-    					{movie.title}
-    					<img src={movie.poster} alt="poster" />
+    				<div className="col-md-4 col-sm-12 col-lg-3" key={movie.id || movie._id} value={movie.id || movie._id}>
+							<a href={'/movies/' + (movie.id || movie._id)}>
+								<img className="poster" src={movie.poster} alt="poster"/>
+							</a>
     				</div>
         			))
         		}

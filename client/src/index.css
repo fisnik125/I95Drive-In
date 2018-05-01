@@ -51,9 +51,22 @@ a:hover {
   }
 }
 
+nav.navbar{
+  border-radius: 0px;
+}
 
-/* FOOTER */
+/* MOVIE COLLECTION */
+.poster{
+  height: 300px;
+  width: 250px;
+}
 
-#footer{
-  background: #808080,
+.movieSelector{
+  margin-bottom: 25px;
+}
+
+
+/* HEADER */
+.header{
+  text-align: center;
 }
