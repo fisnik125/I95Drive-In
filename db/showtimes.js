@@ -32,13 +32,17 @@ const mongoCommands = {
     return db.collection('showtimes').find().toArray();
   },
   insert: (db, params) => {
+    const movieId = mongo.ObjectId(params[0]);
+    const startDate = new Date(params[1]);
+    const endDate = new Date(params[2]);
+
     return db.collection('showtimes').insert({
-      movieId: params[0], startDate: params[1], endDate: params[2], price: params[3]
+      movieId, startDate, endDate, price: params[3]
     });
   },
-  delete: (db, params) => {
-    const startDate = new Date(params[1]);
+  delete: async (db, params) => {
     const movieId = mongo.ObjectId(params[0]);
+    const startDate = new Date(params[1]);
 
     return db.collection('showtimes').deleteOne({ movieId, startDate });
   }

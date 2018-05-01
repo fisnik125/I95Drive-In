@@ -56,9 +56,9 @@ export default class MovieDetail extends Component {
 
         <div className='MovieDetail__showtimes'>
           {showtimes.map((showtime, i) => {
-            const { start_date, end_date, price } = showtime;
-            const formattedStartDate = moment(start_date).format("dddd, MMMM DD, h:mm:ss a");
-            const formattedEndDate = moment(end_date).format("MMMM DD, h:mm:ss a");
+            const { start_date, end_date, startDate, endDate, price } = showtime;
+            const formattedStartDate = moment(start_date || startDate).format("dddd, MMMM DD, h:mm:ss a");
+            const formattedEndDate = moment(end_date || endDate).format("MMMM DD, h:mm:ss a");
 
             return (
               <div className='MovieDetail__showtime' key={i}>

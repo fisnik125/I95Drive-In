@@ -26,7 +26,6 @@ export const query = async (command, params, callback) => {
   if (process.env.MONGO === 'true') {
     let result = await command(mongo, params);
     if (!result) return [];
-    if (callback) result = callback(result);
     return Array.isArray(result) ? result : [result];
   } else {
     let result = await postgres.query(command, params);

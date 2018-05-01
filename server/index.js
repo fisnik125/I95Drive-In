@@ -88,12 +88,12 @@ app.get('/api/movies/:id', async (req, res) => {
         movie_id: row.movieId, start_date: row.start_date, end_date: row.end_date, price: row.price })
       );
 
-      return { movie, showtimes };
+      return [{ movie, showtimes }];
     };
 
     try {
-      const { movie, showtimes } = await query(Movies.findWithShowtimes, [id], formatResult);
-      res.status(200).send({ movie, showtimes });
+      const result = await query(Movies.findWithShowtimes, [id], formatResult);
+      res.status(200).send({ movie: result[0].movie, showtimes: result[0].showtimes });
     } catch(err) {
       res.status(404).send({ message: `Error finding movie with id: ${id}. Error: ${err}` });
     }
