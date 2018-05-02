@@ -66,9 +66,10 @@ app.get('/api/session', async (req, res) => {
 // Registration
 app.post('/api/user', async (req, res) => {
   const { email, password } = req.body;
+  const admin = false;
 
   try {
-    await query(Users.register, [email, password]);
+    await query(Users.insert, [email, password, admin]);
     res.status(200).send({ message: 'User Created.' });
   } catch(error){
     res.status(400).send({ message: `Error creating user: ${error.message}` });

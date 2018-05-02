@@ -10,6 +10,7 @@
     "db:drop": "node db/drop.js",
     "fixtures:load:movies": "node db/fixtures/movies.js",
     "fixtures:load:showtimes": "node db/fixtures/showtimes.js",
+    "fixtures:load:users": "node db/fixtures/users.js",
     "test": "cd client && yarn test"
   },
   "dependencies": {
