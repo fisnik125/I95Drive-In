@@ -4,6 +4,7 @@ const postgresCommands = {
     FROM transactions
     INNER JOIN showtimes ON transactions.transactionable_id = showtimes.id
     INNER JOIN movies ON showtimes.movie_id = movies.id
+    WHERE showtimes.start_date BETWEEN $1 AND $2
     GROUP BY name
     ORDER BY value DESC`,
   transactionsByDayOfWeek: `
@@ -16,6 +17,9 @@ const postgresCommands = {
 
 const mongoCommands = {
   moviesByProfit: async (db, params) => {
+    const startDate = params[0];
+    const endDate = params[1];
+
     return db.collection('transactions').aggregate([{
       $lookup: {
         from: 'showtimes',
@@ -32,6 +36,10 @@ const mongoCommands = {
       }
     }, {
       $unwind: "$showtimes"
+    }, {
+       $match: {
+         "showtimes.startDate": {$gte: new Date(startDate), $lt: new Date(endDate) }
+       }
     }, {
       $group: {
         _id: "$movie.title",

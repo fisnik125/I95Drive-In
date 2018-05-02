@@ -191,8 +191,9 @@ app.post('/api/transactions', async (req, res) => {
 
 app.get('/api/reports/:reportType', async (req, res) => {
   const { reportType } = req.params;
+  const { startDate, endDate } = req.query;
 
-  const report = await query(Reports[reportType]);
+  const report = await query(Reports[reportType], [startDate, endDate]);
 
   if (!report) {
     res.status(404).send({ message: `No report found for ${reportType}` });

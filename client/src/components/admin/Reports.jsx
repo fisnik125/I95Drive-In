@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import { BarChart, PieChart, Sector, Pie, Bar, CartesianGrid, XAxis, YAxis, Tooltip } from 'recharts';
+import moment from 'moment';
+import DatePicker from 'react-date-picker';
 
 import Api from '../../Api';
 
@@ -93,32 +95,59 @@ export default class Reports extends Component {
   state = {
     report: [],
     reportType: Reports.DEFAULT_REPORT,
+    startDate: moment().toDate(),
+    endDate: moment('2018-12-31').toDate(),
   }
 
 	componentWillMount() {
-    this.reportChange({ target: { value: Reports.DEFAULT_REPORT } });
+    const { startDate, endDate } = this.state;
+    this.fetchReport(Reports.DEFAULT_REPORT, startDate, endDate);
   }
 
   reportChange = (ev) => {
-    const { value: reportType } = ev.target;
+    const { value } = ev.target;
+    const { startDate, endDate } = ev.target;
 
-    Api.get(`/api/reports/${reportType}`)
+    this.setState({ reportType: value });
+    this.fetchReport(value, startDate, endDate);
+  }
+
+  fetchReport = (reportType, startDate, endDate) => {
+    startDate = moment(startDate).format('YYYY-MM-DD');
+    endDate = moment(endDate).format('YYYY-MM-DD');
+
+    Api.get(`/api/reports/${reportType}?startDate=${startDate}&endDate=${endDate}`)
       .then(res => { this.setState({ report: res.report, reportType }); })
       .catch(err => { console.error(err); });
   }
 
+  onStartDateChange = (date) => {
+    const { reportType, endDate } = this.state;
+
+    this.setState({ startDate: date });
+    this.fetchReport(reportType, date, endDate);
+  }
+
+  onEndDateChange = (date) => {
+    const { reportType, startDate } = this.state;
+
+    this.setState({ endDate: date });
+    this.fetchReport(reportType, startDate, date);
+  }
+
   render() {
-    const { report, reportType } = this.state;
-    console.log('report', report);
+    const { report, reportType, startDate, endDate } = this.state;
 
     return (
       <div className='Reports'>
         <h1>Reports</h1>
         <label htmlFor='report-selection'>Select Your Report: </label>
-        <select onChange={this.reportChange} id='report-selection'>
+        <select onChange={this.changeReport} id='report-selection'>
           <option default value='moviesByProfit'>Movies By Profit</option>
           <option default value='transactionsByDayOfWeek'>Most Popular Weekday</option>
         </select>
+        <DatePicker onChange={this.onStartDateChange} value={startDate} />
+        <DatePicker onChange={this.onEndDateChange} value={endDate} />
 
         {(() => {
           switch(reportType) {
