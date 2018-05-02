@@ -12,6 +12,8 @@ const postgresCommands = {
   insert: `
     INSERT INTO transactions (user_email, transactionable_id, transactionable_type, quantity)
     VALUES ($1, $2, $3, $4)`,
+  deleteAll: `
+    TRUNCATE transactions`,
   }
 
 const mongoCommands = {

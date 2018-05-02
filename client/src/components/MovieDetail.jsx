@@ -5,6 +5,8 @@ import Alert from 'react-s-alert';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 
+import Api from '../Api';
+
 import './MovieDetail.css';
 
 class Showtime extends Component {
@@ -26,24 +28,12 @@ class Showtime extends Component {
     this.setState({ quantity: value });
   }
 
-  createTransaction = async ({ id, quantity }) => {
-    const response = await fetch('/api/transactions', {
-      body: JSON.stringify({ transactionableId: id, quantity, transactionableType: 'showtimes' }),
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      credentials: 'include',
-    });
-    const body = await response.json();
-
-    if (response.status !== 200) throw Error(body.message);
-    return body
-  }
-
   purchaseShowtimes = () => {
     const { quantity } = this.state;
-    const { id } = this.props;
+    const { id: transactionableId } = this.props;
+    const transactionableType = 'showtimes';
 
-    this.createTransaction({ id, quantity })
+    Api.post('/api/transactions', { transactionableId, transactionableType, quantity })
       .then(() => { Alert.success('Movie Ticket(s) Purchased.'); })
       .then(this.toggleModal)
       .catch(err => { console.error('Error creating transaction: ', err); });
@@ -87,22 +77,11 @@ class MovieDetail extends Component {
   componentWillMount() {
     const { id } = this.props.match.params;
 
-    this.fetchMovieWithShowtimes(id)
+    Api.get(`/api/movies/${id}?withShowtimes=true`)
       .then(({ movie, showtimes }) => { this.setState({ movie, showtimes }); })
       .catch(err => {
         console.error(`Error fetching Movie with Showtimes: ${err}`);
       });
-  }
-
-  fetchMovieWithShowtimes = async (movieId) => {
-    const response = await fetch(`/api/movies/${movieId}?withShowtimes=true`, {
-      method: 'GET',
-      headers: { 'content-type': 'application/json' },
-    });
-    const body = await response.json();
-
-    if (response.status !== 200) throw Error(body.message);
-    return body
   }
 
   render() {
@@ -137,7 +116,7 @@ class MovieDetail extends Component {
             const formattedEndDate = moment(end_date || endDate).format("MMMM DD, h:mm:ss a");
             const login = () => history.push(`/login?redirect=${location.pathname}`);
 
-            if (!price) return <strong>No Showings Available</strong>;
+            if (!price) return <strong key={i}>No Showings Available</strong>;
 
             return (
               <Showtime key={i}

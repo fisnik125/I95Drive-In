@@ -7,6 +7,7 @@ import Users from '../db/users';
 import Movies from '../db/movies';
 import Showtimes from '../db/showtimes';
 import Transactions from '../db/transactions';
+import Reports from '../db/reports';
 
 require('dotenv').config(); // Load .env files into process.env
 
@@ -36,12 +37,13 @@ app.post('/api/session', async (req, res) => {
   const { email, password } = req.body;
 
   const result = await query(Users.login, [email, password]);
+  const user = result[0];
 
   if (result.length === 0) {
     res.status(400).send({ message: 'No user matched that email or password.' });
   } else {
-    req.session.user = email;
-    res.status(200).send({ message: 'User Authenticated.' });
+    req.session.user = user;
+    res.status(200).send({ message: 'User Authenticated.', user });
   }
 });
 
@@ -65,9 +67,10 @@ app.get('/api/session', async (req, res) => {
 // Registration
 app.post('/api/user', async (req, res) => {
   const { email, password } = req.body;
+  const admin = false;
 
   try {
-    await query(Users.register, [email, password]);
+    await query(Users.insert, [email, password, admin]);
     res.status(200).send({ message: 'User Created.' });
   } catch(error){
     res.status(400).send({ message: `Error creating user: ${error.message}` });
@@ -169,7 +172,7 @@ app.delete('/api/showtimes/:movieId', async (req, res) => {
 
 app.post('/api/transactions', async (req, res) => {
   const { transactionableType, quantity } = req.body;
-  const { user } = req.session;
+  const { email } = req.session.user;
   let { transactionableId } = req.body;
 
   if (!isNaN(transactionableId)) transactionableId = parseInt(transactionableId, 10);
@@ -178,11 +181,24 @@ app.post('/api/transactions', async (req, res) => {
     res.status(400).send({ message: 'User not logged in' });
   } else {
     try {
-      await query(Transactions.insert, [user, transactionableId, transactionableType, quantity]);
+      await query(Transactions.insert, [email, transactionableId, transactionableType, quantity]);
       res.status(200).send({ message: 'Transaction Created.' });
     } catch(error) {
       res.status(400).send({ message: `Error creating transaction: ${error.message}` });
     }
+  }
+});
+
+app.get('/api/reports/:reportType', async (req, res) => {
+  const { reportType } = req.params;
+  const { startDate, endDate } = req.query;
+
+  const report = await query(Reports[reportType], [startDate, endDate]);
+  
+  if (!report) {
+    res.status(404).send({ message: `No report found for ${reportType}` });
+  } else {
+    res.status(200).send({ message: `Report Found.`, report });
   }
 });
 

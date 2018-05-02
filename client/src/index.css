@@ -71,3 +71,7 @@ nav.navbar{
 .header{
   text-align: center;
 }
+
+.react-date-picker__calendar {
+  z-index: 500;
+}

@@ -3,6 +3,8 @@ import BigCalendar from 'react-big-calendar';
 import moment from 'moment';
 import _ from 'lodash';
 
+import Api from '../../Api';
+
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 
 BigCalendar.momentLocalizer(moment);
@@ -19,9 +21,9 @@ export default class AdminShowtimes extends Component {
 	}
 
   fetchAllMoviesAndShowtimes = () => {
-    this.fetchMovies()
+    Api.get('/api/movies')
       .then(res => { this.setState({ movies: res.movies }); })
-      .then(this.fetchShowtimes)
+      .then(() => Api.get('/api/showtimes'))
       .then(res => {
         const showtimes = this.state.movies.map(movie => {
           const movieShowTimes = res.showtimes.filter(st =>
@@ -34,39 +36,6 @@ export default class AdminShowtimes extends Component {
         this.setState({ showtimes: _.flatten(showtimes) });
       })
       .catch(err => console.error(err));
-  }
-
-  fetchShowtimes = async () => {
-    const response = await fetch('/api/showtimes', {
-      method: 'GET',
-      headers: { 'content-type': 'application/json' },
-    });
-    const body = await response.json();
-
-    if (response.status !== 200) throw Error(body.message);
-    return body
-  }
-
-  fetchMovies = async () => {
-    const response = await fetch('/api/movies', {
-      method: 'GET',
-      headers: { 'content-type': 'application/json' },
-    });
-    const body = await response.json();
-
-    if (response.status !== 200) throw Error(body.message);
-    return body
-  }
-
-  fetchShowtimeForMovie = async (id) => {
-    const response = await fetch(`/api/movies/${id}/showtimes`, {
-      method: 'GET',
-      headers: { 'content-type': 'application/json' },
-    });
-    const body = await response.json();
-
-    if (response.status !== 200) throw Error(body.message);
-    return body
   }
 
   formatShowtimes = (movie, showtimes) => {
@@ -92,7 +61,7 @@ export default class AdminShowtimes extends Component {
     const currentMovie = this.state.movies.find(movie => movie.id === id || movie._id === id );
     this.setState({ movie: currentMovie });
 
-    this.fetchShowtimeForMovie(id)
+    Api.get(`/api/movies/${id}/showtimes`)
       .then(res => {
         const showtimes = this.formatShowtimes(currentMovie, res.showtimes);
         this.setState({ showtimes });
@@ -100,38 +69,24 @@ export default class AdminShowtimes extends Component {
       .catch(err => console.error(err));
   }
 
-  createShowTime = async (start, end, movieId, price) => {
-    const response = await fetch('/api/showtimes', {
-      body: JSON.stringify({ start, end, movieId, price }),
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-    });
-    const body = await response.json();
-
-    if (response.status !== 200) throw Error(body.message);
-    return body
-  }
-
-  deleteShowTime = async (start, movieId) => {
-    const response = await fetch(`/api/showtimes/${movieId}?start=${start}`, {
-      method: 'DELETE',
-      headers: { 'content-type': 'application/json' },
-    });
-    const body = await response.json();
-
-    if (response.status !== 200) throw Error(body.message);
-    return body
-  }
-
-  onSelectSlot = ({ start, end }) => {
+  onSelectSlot = ({ start: startDate, end: endDate }) => {
     const { movie: { title, id, _id }, showtimes } = this.state;
 
     const price = window.prompt("Please enter a price for this showtime", 0.00);
+    const start = this.formatDate(startDate);
+    const end = this.formatDate(endDate);
+    const movieId = id || _id;
 
-    this.createShowTime(this.formatDate(start), this.formatDate(end), (id || _id), price)
+    Api.post('/api/showtimes', { start, end, movieId, price })
       .then(res => {
         const updatedShowtimes = showtimes;
-        updatedShowtimes.push({ id: showtimes.length + 1, movieId: id || _id, start, end, title });
+        updatedShowtimes.push({
+          id: showtimes.length + 1,
+          movieId,
+          start: startDate,
+          end: endDate,
+          title,
+        });
         this.setState({ showtimes: updatedShowtimes });
       })
       .catch(err => { console.error(err); });
@@ -141,8 +96,9 @@ export default class AdminShowtimes extends Component {
 
   onSelectEvent = ({ id, start, movieId }) => {
     if (window.confirm("Do you want to delete this showtime?")) {
+      const startDate = this.formatDate(start);
 
-      this.deleteShowTime(this.formatDate(start), movieId)
+      Api.delete(`/api/showtimes/${movieId}?start=${startDate}`)
         .then(res => {
           alert('Showtime deleted!');
           const remainingShowtimes = this.state.showtimes.filter(st => st.id !== id);

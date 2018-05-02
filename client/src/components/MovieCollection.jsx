@@ -1,4 +1,7 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
+
+import Api from '../Api';
 
 class MovieCollection extends Component {
 	state = {
@@ -9,30 +12,18 @@ class MovieCollection extends Component {
 	}
 
 	componentWillMount() {
-		this.fetchMovies()
-    .then(res => { this.setState({ movies: res.movies, filteredMovies: res.movies }); })
-    .catch(err => console.error(err));
+		Api.get('/api/movies')
+      .then(({ movies }) => { this.setState({ movies, filteredMovies: movies }); })
+      .catch(err => console.error(err));
 		}
-
-	fetchMovies = async () => {
-    const response = await fetch('/api/movies', {
-      method: 'GET',
-      headers: { 'content-type': 'application/json' },
-    });
-    const body = await response.json();
-
-
-    if (response.status !== 200) throw Error(body.message);
-    return body
-  }
 
 	filterMovies = (e) => {
 		const value = e.target.value.toLowerCase();
-		console.log(value);
-		const filteredMovies = this.state.movies.filter(movie => movie.title.toLowerCase().includes(value));
-		this.setState({filteredMovies});
+		const filteredMovies = this.state.movies.filter(movie =>
+      movie.title.toLowerCase().includes(value)
+    );
+		this.setState({ filteredMovies });
 	}
-
 
   render() {
     return (
@@ -40,14 +31,17 @@ class MovieCollection extends Component {
         <h1> Choose your Movie </h1>
         <input className="movieSelector" onChange={this.filterMovies}></input>
         <div className="row">
-        {this.state.filteredMovies.map(movie => (
-    				<div className="col-md-4 col-sm-12 col-lg-3" key={movie.id || movie._id} value={movie.id || movie._id}>
-							<a href={'/movies/' + (movie.id || movie._id)}>
+        {this.state.filteredMovies.map((movie, i) => {
+          const movieId = movie.id || movie._id;
+
+          return (
+            <div className="col-md-4 col-sm-12 col-lg-3" key={i} value={movieId}>
+							<Link to={`/movies/${movieId}`}>
 								<img className="poster" src={movie.poster} alt="poster"/>
-							</a>
+							</Link>
     				</div>
-        			))
-        		}
+          );
+        })}
         </div>
       </div>
     );
