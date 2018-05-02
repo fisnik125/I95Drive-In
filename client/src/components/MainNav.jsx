@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Navbar, Nav, NavItem } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
+import _ from 'lodash';
 
 import Api from '../Api';
 
@@ -40,6 +41,15 @@ class MainNav extends Component {
         </Navbar.Header>
         <Navbar.Collapse>
           <Nav pullRight>
+
+            { _.get(user, 'admin') ?
+            [<NavItem key={5} eventKey={5} componentClass={Link} to='/admin/showtimes' href='/admin/showtimes'>
+              Edit Showtimes
+            </NavItem>,
+            <NavItem key={6} eventKey={6} componentClass={Link} to='/admin/reports' href='admin/reports'>
+              Reports
+            </NavItem>] : null }
+
             { user ?
               <NavItem key={1} eventKey={1} componentClass={Link} onClick={this.logout} to='/' href='/'>
                 Logout

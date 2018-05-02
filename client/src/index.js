@@ -12,6 +12,7 @@ import NotFound from './components/NotFound';
 import Registration from './components/Registration';
 import MovieDetail from './components/MovieDetail';
 import AdminShowtimes from './components/admin/AdminShowtimes';
+import Reports from './components/admin/Reports';
 import MovieCollection from './components/MovieCollection';
 
 import userReducer from './reducers/user';
@@ -23,11 +24,10 @@ import 'react-s-alert/dist/s-alert-css-effects/stackslide.css';
 const store = createStore(userReducer);
 
 ReactDOM.render(
-
   <Provider store={store}>
     <BrowserRouter>
     <div>
-      <MainNav />,
+      <MainNav />
       <main className='container'>
         <Switch>
           <Route exact path="/" component={MovieCollection}/>
@@ -36,6 +36,7 @@ ReactDOM.render(
           <Route exact path="/movies/:id" component={MovieDetail}/>
           <Redirect exact path="/admin" to="/admin/showtimes" />
           <Route exact path="/admin/showtimes" component={AdminShowtimes}/>
+          <Route exact path="/admin/reports" component={Reports}/>
           <Route component={NotFound} />
         </Switch>
         <Alert effect='stackslide' position='top' timeout={2000} />
