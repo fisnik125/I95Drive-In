@@ -104,9 +104,9 @@ export default class Reports extends Component {
     this.fetchReport(Reports.DEFAULT_REPORT, startDate, endDate);
   }
 
-  reportChange = (ev) => {
+  changeReport = (ev) => {
     const { value } = ev.target;
-    const { startDate, endDate } = ev.target;
+    const { startDate, endDate } = this.state;
 
     this.setState({ reportType: value });
     this.fetchReport(value, startDate, endDate);

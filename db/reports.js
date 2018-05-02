@@ -11,6 +11,7 @@ const postgresCommands = {
     SELECT to_char(start_date, 'Day') AS name, CAST(count(transactions) AS INTEGER) AS value
     FROM transactions
     INNER JOIN showtimes ON transactions.transactionable_id = showtimes.id
+    WHERE showtimes.start_date BETWEEN $1 AND $2
     GROUP BY name
     ORDER BY value DESC;`,
 }
@@ -54,6 +55,9 @@ const mongoCommands = {
     }]).toArray();
   },
   transactionsByDayOfWeek: async (db, params) => {
+    const startDate = params[0];
+    const endDate = params[1];
+
     const ifFri = { $cond: [ {$eq:[6,"$_id"]}, "Friday", "Saturday"] };
     const ifThu = { $cond: [ {$eq:[5,"$_id"]}, "Thursday", ifFri] };
     const ifWed = { $cond: [ {$eq:[4,"$_id"]}, "Wednesday", ifThu] };
@@ -70,6 +74,10 @@ const mongoCommands = {
           }
         }, {
          $unwind: '$showtimes'
+        }, {
+           $match: {
+             "showtimes.startDate": {$gte: new Date(startDate), $lt: new Date(endDate) }
+           }
         }, {
           $project: {
              name: { $dayOfWeek: '$showtimes.startDate' }
