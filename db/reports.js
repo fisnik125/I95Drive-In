@@ -7,6 +7,14 @@ const postgresCommands = {
     WHERE showtimes.start_date BETWEEN $1 AND $2
     GROUP BY name
     ORDER BY value DESC`,
+  moviesByPopularity: `
+    SELECT movies.title AS name, SUM(transactions.quantity)::double precision AS value
+    FROM transactions
+    INNER JOIN showtimes ON transactions.transactionable_id = showtimes.id
+    INNER JOIN movies ON showtimes.movie_id = movies.id
+    WHERE showtimes.start_date BETWEEN $1 AND $2
+    GROUP BY name
+    ORDER BY value DESC`,
   transactionsByDayOfWeek: `
     SELECT to_char(start_date, 'Day') AS name, CAST(count(transactions) AS INTEGER) AS value
     FROM transactions
@@ -45,6 +53,43 @@ const mongoCommands = {
       $group: {
         _id: "$movie.title",
         value: { $sum: { $multiply: [ "$quantity", "$showtimes.price" ] } }
+      }
+    }, {
+      $sort: { value: -1 }
+    }, {
+      $unwind: "$_id"
+    }, {
+      $project: { name: "$_id", value: 1, _id: 0 }
+    }]).toArray();
+  },
+  moviesByPopularity: async (db, params) => {
+    const startDate = params[0];
+    const endDate = params[1];
+
+    return db.collection('transactions').aggregate([{
+      $lookup: {
+        from: 'showtimes',
+        localField: 'transactionableId',
+        foreignField: '_id',
+        as: 'showtimes'
+      }
+    }, {
+      $lookup: {
+        from: 'movies',
+        localField: 'showtimes.0.movieId',
+        foreignField: '_id',
+        as: 'movie'
+      }
+    }, {
+      $unwind: "$showtimes"
+    }, {
+       $match: {
+         "showtimes.startDate": {$gte: new Date(startDate), $lt: new Date(endDate) }
+       }
+    }, {
+      $group: {
+        _id: "$movie.title",
+        value: { $sum: '$quantity' }
       }
     }, {
       $sort: { value: -1 }

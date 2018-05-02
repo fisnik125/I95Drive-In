@@ -5,12 +5,12 @@ import DatePicker from 'react-date-picker';
 
 import Api from '../../Api';
 
-const DriveInBarChart = ({ report }) => (
+const DriveInBarChart = ({ report, separator = ': ' }) => (
   <BarChart width={970} height={500} data={report}>
     <CartesianGrid strokeDasharray="3 3"/>
     <XAxis dataKey='name'/>
     <YAxis/>
-    <Tooltip separator=': $'/>
+    <Tooltip separator={separator}/>
     <Bar dataKey='value' fill="#8884d8"/>
   </BarChart>
 );
@@ -144,6 +144,7 @@ export default class Reports extends Component {
         <label htmlFor='report-selection'>Select Your Report: </label>
         <select onChange={this.changeReport} id='report-selection'>
           <option default value='moviesByProfit'>Movies By Profit</option>
+          <option default value='moviesByPopularity'>Movies By Popularity</option>
           <option default value='transactionsByDayOfWeek'>Most Popular Weekday</option>
         </select>
         <DatePicker onChange={this.onStartDateChange} value={startDate} />
@@ -151,7 +152,8 @@ export default class Reports extends Component {
 
         {(() => {
           switch(reportType) {
-            case 'moviesByProfit': return <DriveInBarChart report={report} />
+            case 'moviesByProfit': return <DriveInBarChart separator=': $' report={report} />
+            case 'moviesByPopularity': return <DriveInBarChart report={report} />
             case 'transactionsByDayOfWeek': return <DriveInAreaChart report={report} />
             default: return null;
           }
