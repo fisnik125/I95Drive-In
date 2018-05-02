@@ -32,7 +32,7 @@ const postgresCommands = {
   `,
   findWithShowtimes: `
     SELECT *, showtimes.id as showtime_id FROM movies
-    INNER JOIN showtimes ON movies.id = showtimes.movie_id
+    LEFT OUTER JOIN showtimes ON movies.id = showtimes.movie_id
     WHERE movies.id = $1
   `,
   }

@@ -7,7 +7,6 @@ import Alert from 'react-s-alert';
 import { createStore } from 'redux';
 import { Provider } from 'react-redux';
 
-import Showtimes from './components/Showtimes';
 import Login from  './components/Login';
 import MainNav from './components/MainNav';
 import Admin from './components/Admin';
@@ -26,10 +25,12 @@ import 'react-s-alert/dist/s-alert-css-effects/stackslide.css';
 const store = createStore(userReducer);
 
 ReactDOM.render(
+
   <Provider store={store}>
     <BrowserRouter>
-      <MainNav />
-        <main className='container'>
+    <div>
+      <MainNav />,
+      <main className='container'>
         <Switch>
           <Route exact path="/" component={MovieCollection}/>
           <Route exact path="/admin/showtimes" component={AdminShowtimes}/>
@@ -41,6 +42,7 @@ ReactDOM.render(
         </Switch>
         <Alert effect='stackslide' position='top' timeout={2000} />
       </main>
+    </div>
     </BrowserRouter>
   </Provider>,
   document.getElementById('root')

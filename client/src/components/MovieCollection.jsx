@@ -10,7 +10,7 @@ class MovieCollection extends Component {
 
 	componentWillMount() {
 		this.fetchMovies()
-    .then(res => { this.setState({ movies: res.movies }); })
+    .then(res => { this.setState({ movies: res.movies, filteredMovies: res.movies }); })
     .catch(err => console.error(err));
 		}
 
