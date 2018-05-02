@@ -116,7 +116,7 @@ class MovieDetail extends Component {
             const formattedEndDate = moment(end_date || endDate).format("MMMM DD, h:mm:ss a");
             const login = () => history.push(`/login?redirect=${location.pathname}`);
 
-            if (!price) return <strong>No Showings Available</strong>;
+            if (!price) return <strong key={i}>No Showings Available</strong>;
 
             return (
               <Showtime key={i}
