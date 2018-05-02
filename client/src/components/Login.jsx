@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import _ from 'lodash';
 
+import Api from '../Api';
 import '../components/Login.css';
 
 class Login extends Component  {
@@ -26,28 +27,20 @@ class Login extends Component  {
 
     ev.preventDefault();
 
-    this.callApi(email, password)
-      .then(res => { onLogin(res.user) })
-      .then(() => {
+    Api.post('/api/session', { email, password })
+      .then(res => {
+        onLogin(res.user);
+        return res.user
+      })
+      .then((user) => {
         let redirect = location.search.match(/redirect=([^&]*)/);
         redirect = _.get(redirect, '1', undefined);
 
-        redirect ? history.push(redirect) : history.push('/');
+        const landingPage = user.admin ? '/admin' : '/'
+
+        redirect ? history.push(redirect) : history.push(landingPage);
       })
       .catch(err => console.error(err));
-  }
-
-  callApi = async (email, password) => {
-    const response = await fetch('/api/session', {
-      body: JSON.stringify({ email, password }),
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      credentials: 'include',
-    });
-    const body = await response.json();
-
-    if (response.status !== 200) throw Error(body.message);
-    return body
   }
 
   render() {

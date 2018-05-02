@@ -1,28 +1,17 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
+
+import Api from '../Api';
 
 class Registration extends Component{
-  
   handleChange = (e) => {
     this.setState({ [e.target.name]: e.target.value})
   }
 
   submit = () => {
     const { email, password } = this.state;
-    this.callApi(email, password)
+    Api.post('/api/user', { email, password })
       .then(res => console.log(res))
       .catch(err => console.error(err));
-  }
-
-  callApi = async (email, password) => {
-    const response = await fetch('/api/user', {
-      body: JSON.stringify({ email, password }),
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-    });
-    const body = await response.json();
-
-    if (response.status !== 200) throw Error(body.message);
-    return body
   }
 
   render(){

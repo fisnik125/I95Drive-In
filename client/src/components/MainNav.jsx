@@ -3,48 +3,23 @@ import { Navbar, Nav, NavItem } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 
+import Api from '../Api';
+
 import './MainNav.css';
 
 class MainNav extends Component {
   componentWillMount() {
     const { login } = this.props;
 
-    this.checkSession()
+    Api.get('/api/session')
       .then(res => { login(res.user) })
       .catch(err => { /* Do nothing */ });
-  }
-
-  deleteSession = async () => {
-    const response = await fetch('/api/session', {
-      method: 'DELETE',
-      headers: { 'content-type': 'application/json' },
-      credentials: 'include',
-    });
-    const body = await response.json();
-
-    if (response.status !== 200) throw Error(body.message);
-    return body
-  }
-
-  checkSession = async () => {
-    const response = await fetch('/api/session', {
-      method: 'GET',
-      headers: {
-        'content-type': 'application/json',
-        'cache-control': 'no-cache',
-      },
-      credentials: 'include',
-    });
-    const body = await response.json();
-
-    if (response.status !== 200) throw Error(body.message);
-    return body
   }
 
   logout = () => {
     const { onLogout } = this.props;
 
-    this.deleteSession()
+    Api.delete('/api/session')
       .then(res => { onLogout(); })
       .catch(err => { console.error(err); });
   }
@@ -89,7 +64,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   onLogout: () => { dispatch({ type: 'LOGOUT' }); },
-  login: (email) => { dispatch({ type: 'LOGIN', email }); },
+  login: (user) => { dispatch({ type: 'LOGIN', user }); },
 });
 
 export default connect(

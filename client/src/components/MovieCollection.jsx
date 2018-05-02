@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 
+import Api from '../Api';
+
 class MovieCollection extends Component {
 	state = {
 		movies: [],
@@ -9,30 +11,18 @@ class MovieCollection extends Component {
 	}
 
 	componentWillMount() {
-		this.fetchMovies()
-    .then(res => { this.setState({ movies: res.movies, filteredMovies: res.movies }); })
-    .catch(err => console.error(err));
+		Api.get('/api/movies')
+      .then(({ movies }) => { this.setState({ movies, filteredMovies: movies }); })
+      .catch(err => console.error(err));
 		}
-
-	fetchMovies = async () => {
-    const response = await fetch('/api/movies', {
-      method: 'GET',
-      headers: { 'content-type': 'application/json' },
-    });
-    const body = await response.json();
-
-
-    if (response.status !== 200) throw Error(body.message);
-    return body
-  }
 
 	filterMovies = (e) => {
 		const value = e.target.value.toLowerCase();
-		console.log(value);
-		const filteredMovies = this.state.movies.filter(movie => movie.title.toLowerCase().includes(value));
-		this.setState({filteredMovies});
+		const filteredMovies = this.state.movies.filter(movie =>
+      movie.title.toLowerCase().includes(value)
+    );
+		this.setState({ filteredMovies });
 	}
-
 
   render() {
     return (
