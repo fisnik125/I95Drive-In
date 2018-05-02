@@ -6,6 +6,12 @@ const postgresCommands = {
     INNER JOIN movies ON showtimes.movie_id = movies.id
     GROUP BY name
     ORDER BY value DESC`,
+  transactionsByDayOfWeek: `
+    SELECT to_char(start_date, 'Day') AS name, CAST(count(transactions) AS INTEGER) AS value
+    FROM transactions
+    INNER JOIN showtimes ON transactions.transactionable_id = showtimes.id
+    GROUP BY name
+    ORDER BY value DESC;`,
 }
 
 const mongoCommands = {
