@@ -27,7 +27,7 @@ class Login extends Component  {
     ev.preventDefault();
 
     this.callApi(email, password)
-      .then(res => { onLogin(email) })
+      .then(res => { onLogin(res.user) })
       .then(() => {
         let redirect = location.search.match(/redirect=([^&]*)/);
         redirect = _.get(redirect, '1', undefined);
@@ -91,7 +91,7 @@ class Login extends Component  {
 const mapStateToProps = (state) => ({});
 
 const mapDispatchToProps = (dispatch) => ({
-  onLogin: (email) => { dispatch({ type: 'LOGIN', email }); }
+  onLogin: (user) => { dispatch({ type: 'LOGIN', user }); }
 });
 
 export default withRouter(

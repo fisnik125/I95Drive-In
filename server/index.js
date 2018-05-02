@@ -36,12 +36,13 @@ app.post('/api/session', async (req, res) => {
   const { email, password } = req.body;
 
   const result = await query(Users.login, [email, password]);
+  const user = result[0];
 
   if (result.length === 0) {
     res.status(400).send({ message: 'No user matched that email or password.' });
   } else {
-    req.session.user = email;
-    res.status(200).send({ message: 'User Authenticated.' });
+    req.session.user = user;
+    res.status(200).send({ message: 'User Authenticated.', user });
   }
 });
 
@@ -169,7 +170,7 @@ app.delete('/api/showtimes/:movieId', async (req, res) => {
 
 app.post('/api/transactions', async (req, res) => {
   const { transactionableType, quantity } = req.body;
-  const { user } = req.session;
+  const { email } = req.session.user;
   let { transactionableId } = req.body;
 
   if (!isNaN(transactionableId)) transactionableId = parseInt(transactionableId, 10);
@@ -178,7 +179,7 @@ app.post('/api/transactions', async (req, res) => {
     res.status(400).send({ message: 'User not logged in' });
   } else {
     try {
-      await query(Transactions.insert, [user, transactionableId, transactionableType, quantity]);
+      await query(Transactions.insert, [email, transactionableId, transactionableType, quantity]);
       res.status(200).send({ message: 'Transaction Created.' });
     } catch(error) {
       res.status(400).send({ message: `Error creating transaction: ${error.message}` });

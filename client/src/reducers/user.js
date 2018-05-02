@@ -13,7 +13,7 @@ const userReducer = (state = INITIAL_STATE, action) => {
     case 'LOGIN':
       return {
         ...state,
-        user: action.email,
+        user: action.user,
       }
 
     default:
