@@ -124,6 +124,7 @@ export default class Reports extends Component {
           switch(reportType) {
             case 'moviesByProfit': return <DriveInBarChart report={report} />
             case 'transactionsByDayOfWeek': return <DriveInAreaChart report={report} />
+            default: return null;
           }
           })()
         }

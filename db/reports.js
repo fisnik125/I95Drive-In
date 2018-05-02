@@ -45,6 +45,41 @@ const mongoCommands = {
       $project: { name: "$_id", value: 1, _id: 0 }
     }]).toArray();
   },
+  transactionsByDayOfWeek: async (db, params) => {
+    const ifFri = { $cond: [ {$eq:[6,"$_id"]}, "Friday", "Saturday"] };
+    const ifThu = { $cond: [ {$eq:[5,"$_id"]}, "Thursday", ifFri] };
+    const ifWed = { $cond: [ {$eq:[4,"$_id"]}, "Wednesday", ifThu] };
+    const ifTue = { $cond: [ {$eq:[3,"$_id"]}, "Tuesday", ifWed] };
+    const ifMon = { $cond: [ {$eq:[2,"$_id"]}, "Monday", ifTue] };
+    const dayOfWeek = { $cond: [ {$eq:[1,"$_id"]}, "Sunday", ifMon] };
+
+    return db.collection('transactions').aggregate([{
+         $lookup: {
+            from: 'showtimes',
+            localField: 'transactionableId',
+            foreignField: '_id',
+            as: 'showtimes'
+          }
+        }, {
+         $unwind: '$showtimes'
+        }, {
+          $project: {
+             name: { $dayOfWeek: '$showtimes.startDate' }
+          }
+        }, {
+          $group: {
+             _id: "$name",
+             value: { $sum: 1 }
+          }
+        }, {
+          $project: {
+             _id: 0, name: dayOfWeek, value: 1
+          }
+        }, {
+          $sort: { value: -1 }
+        }
+     ]).toArray();
+  }
 }
 
 const commands = process.env.MONGO === 'true' ? mongoCommands : postgresCommands;
