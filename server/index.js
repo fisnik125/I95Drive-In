@@ -7,6 +7,7 @@ import Users from '../db/users';
 import Movies from '../db/movies';
 import Showtimes from '../db/showtimes';
 import Transactions from '../db/transactions';
+import Reports from '../db/reports';
 
 require('dotenv').config(); // Load .env files into process.env
 
@@ -185,6 +186,18 @@ app.post('/api/transactions', async (req, res) => {
     } catch(error) {
       res.status(400).send({ message: `Error creating transaction: ${error.message}` });
     }
+  }
+});
+
+app.get('/api/reports/:reportType', async (req, res) => {
+  const { reportType } = req.params;
+
+  const report = await query(Reports[reportType]);
+
+  if (!report) {
+    res.status(404).send({ message: `No report found for ${reportType}` });
+  } else {
+    res.status(200).send({ message: `Report Found.`, report });
   }
 });
 
