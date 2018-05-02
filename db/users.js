@@ -7,6 +7,7 @@ const postgresCommands = {
    login: `SELECT * FROM users WHERE email = $1 AND password = $2`,
    insert: `INSERT INTO users VALUES ($1, $2, $3)`,
    deleteAll: `TRUNCATE users CASCADE`,
+   all: `SELECT * FROM users`,
 }
 
 const mongoCommands = {
