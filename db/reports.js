@@ -200,6 +200,41 @@ const mongoCommands = {
     }, {
       $project: { name: "$_id", value: 1, _id: 0 }
     }]).toArray();
+  },
+  ticketsVsConcessionProfits: async (db, params) => {
+    return db.collection('transactions').aggregate([{
+      $lookup: {
+        from: 'concessions',
+        localField: 'transactionableId',
+        foreignField: '_id',
+        as: 'concessions'
+      }
+    }, {
+      $lookup: {
+        from: 'showtimes',
+        localField: 'transactionableId',
+        foreignField: '_id',
+        as: 'showtimes'
+      }
+    }, {
+      $unwind: {
+        path: "$concessions",
+        preserveNullAndEmptyArrays: true
+      }
+    }, {
+      $unwind: {
+        path: "$showtimes",
+        preserveNullAndEmptyArrays: true
+      }
+    }, {
+      $group: {
+        _id: "null",
+        concession_profit: { $sum: { $multiply: [ "$quantity", "$concessions.price" ] } },
+        showtime_profit: { $sum: { $multiply: ["$quantity", "$showtimes.price"] } }
+      }
+    }, {
+      $project: { _id: 0, concession_profit: 1, showtime_profit: 1 }
+    }]).toArray();
   }
 }
 

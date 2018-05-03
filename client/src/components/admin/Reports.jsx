@@ -154,7 +154,7 @@ export default class Reports extends Component {
 
   render() {
     const { report, reportType, startDate, endDate } = this.state;
-    console.log('report', report);
+
     return (
       <div className='Reports'>
         <h1>Reports</h1>
