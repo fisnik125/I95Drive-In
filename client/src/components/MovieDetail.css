@@ -77,3 +77,10 @@
   bottom: 0;
   width: 100%;
 }
+
+.MovieDetail__modal-concession {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  margin-bottom: 2rem;
+}

@@ -1,6 +1,7 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import session from 'express-session';
+import _ from 'lodash';
 
 import { findOrCreateDB, query } from '../db';
 import Users from '../db/users';
@@ -8,6 +9,7 @@ import Movies from '../db/movies';
 import Showtimes from '../db/showtimes';
 import Transactions from '../db/transactions';
 import Reports from '../db/reports';
+import Concessions from '../db/concessions';
 
 require('dotenv').config(); // Load .env files into process.env
 
@@ -172,12 +174,13 @@ app.delete('/api/showtimes/:movieId', async (req, res) => {
 
 app.post('/api/transactions', async (req, res) => {
   const { transactionableType, quantity } = req.body;
-  const { email } = req.session.user;
+
+  const email = _.get(req, 'session.user.email', undefined);
   let { transactionableId } = req.body;
 
   if (!isNaN(transactionableId)) transactionableId = parseInt(transactionableId, 10);
 
-  if (!user) {
+  if (!email) {
     res.status(400).send({ message: 'User not logged in' });
   } else {
     try {
@@ -189,12 +192,18 @@ app.post('/api/transactions', async (req, res) => {
   }
 });
 
+app.get('/api/concessions', async (req, res) => {
+  const concessions = await query(Concessions.all);
+
+  res.status(200).send({ message: 'Concessions Found:', concessions });
+});
+
 app.get('/api/reports/:reportType', async (req, res) => {
   const { reportType } = req.params;
   const { startDate, endDate } = req.query;
 
   const report = await query(Reports[reportType], [startDate, endDate]);
-  
+
   if (!report) {
     res.status(404).send({ message: `No report found for ${reportType}` });
   } else {
