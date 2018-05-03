@@ -145,16 +145,22 @@ export default class Reports extends Component {
         <select onChange={this.changeReport} id='report-selection'>
           <option default value='moviesByProfit'>Movies By Profit</option>
           <option default value='moviesByPopularity'>Movies By Popularity</option>
-          <option default value='transactionsByDayOfWeek'>Most Popular Weekday</option>
+          <option default value='transactionsByDayOfWeek'>Movies By Weekday</option>
+          <option default value='concessionsByPopularity'>Concessions By Popularity</option>
         </select>
-        <DatePicker onChange={this.onStartDateChange} value={startDate} />
-        <DatePicker onChange={this.onEndDateChange} value={endDate} />
 
+        { reportType !== 'concessionsByPopularity' ?
+          [
+            <DatePicker key={1} onChange={this.onStartDateChange} value={startDate} />,
+            <DatePicker key={2} onChange={this.onEndDateChange} value={endDate} />
+          ] : null
+      }
         {(() => {
           switch(reportType) {
             case 'moviesByProfit': return <DriveInBarChart separator=': $' report={report} />
             case 'moviesByPopularity': return <DriveInBarChart report={report} />
             case 'transactionsByDayOfWeek': return <DriveInAreaChart report={report} />
+            case 'concessionsByPopularity': return <DriveInAreaChart report={report} />
             default: return null;
           }
           })()

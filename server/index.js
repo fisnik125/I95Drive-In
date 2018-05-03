@@ -202,7 +202,9 @@ app.get('/api/reports/:reportType', async (req, res) => {
   const { reportType } = req.params;
   const { startDate, endDate } = req.query;
 
-  const report = await query(Reports[reportType], [startDate, endDate]);
+  const params = reportType.includes('concession') ? [] : [startDate, endDate]
+
+  const report = await query(Reports[reportType], params);
 
   if (!report) {
     res.status(404).send({ message: `No report found for ${reportType}` });

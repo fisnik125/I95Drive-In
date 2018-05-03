@@ -22,8 +22,16 @@ const postgresCommands = {
     FROM transactions
     INNER JOIN showtimes ON transactions.transactionable_id = showtimes.id
     WHERE showtimes.start_date BETWEEN $1 AND $2
+    AND transactions.transactionable_type = 'showtimes'
     GROUP BY name
     ORDER BY value DESC;`,
+  concessionsByPopularity: `
+    SELECT concessions.type AS name, SUM(transactions.quantity)::double precision AS value
+    FROM transactions
+    INNER JOIN concessions ON transactions.transactionable_id = concessions.id
+    AND transactions.transactionable_type = 'concessions'
+    GROUP BY name
+    ORDER BY value DESC`,
 }
 
 const mongoCommands = {
@@ -115,6 +123,8 @@ const mongoCommands = {
     const dayOfWeek = { $cond: [ {$eq:[1,"$_id"]}, "Sunday", ifMon] };
 
     return db.collection('transactions').aggregate([{
+         $match: { "transactionableType": "showtimes" }
+        }, {
          $lookup: {
             from: 'showtimes',
             localField: 'transactionableId',
@@ -144,6 +154,33 @@ const mongoCommands = {
           $sort: { value: -1 }
         }
      ]).toArray();
+  },
+  concessionsByPopularity: async (db, params) => {
+    return db.collection('transactions').aggregate([{
+       $match: {
+         "transactionableType": "concessions"
+       }
+    }, {
+      $lookup: {
+        from: 'concessions',
+        localField: 'transactionableId',
+        foreignField: '_id',
+        as: 'concessions'
+      }
+    }, {
+      $unwind: "$concessions"
+    }, {
+      $group: {
+        _id: "$concessions.type",
+        value: { $sum: '$quantity' }
+      }
+    }, {
+      $sort: { value: -1 }
+    }, {
+      $unwind: "$_id"
+    }, {
+      $project: { name: "$_id", value: 1, _id: 0 }
+    }]).toArray();
   }
 }
 
