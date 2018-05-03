@@ -202,7 +202,7 @@ app.get('/api/reports/:reportType', async (req, res) => {
   const { reportType } = req.params;
   const { startDate, endDate } = req.query;
 
-  const params = reportType.includes('concession') ? [] : [startDate, endDate]
+  const params = reportType.toLowerCase().includes('concession') ? [] : [startDate, endDate]
 
   const report = await query(Reports[reportType], params);
 

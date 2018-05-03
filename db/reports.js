@@ -32,6 +32,25 @@ const postgresCommands = {
     AND transactions.transactionable_type = 'concessions'
     GROUP BY name
     ORDER BY value DESC`,
+  ticketsVsConcessionProfits: `
+    WITH showtime_sales AS (
+      SELECT SUM(showtimes.price * transactions.quantity)::double precision AS showtime_profit
+      FROM transactions
+      INNER JOIN showtimes ON transactions.transactionable_id = showtimes.id
+      INNER JOIN movies ON showtimes.movie_id = movies.id
+      AND transactions.transactionable_type = 'showtimes'
+      ORDER BY showtime_profit DESC
+    ),
+
+    concession_sales AS (
+      SELECT SUM(concessions.price * transactions.quantity)::double precision AS concession_profit
+      FROM transactions
+      INNER JOIN concessions ON transactions.transactionable_id = concessions.id
+      WHERE transactions.transactionable_type = 'concessions'
+      ORDER BY concession_profit DESC
+    )
+
+    SELECT * FROM showtime_sales, concession_sales`,
 }
 
 const mongoCommands = {
