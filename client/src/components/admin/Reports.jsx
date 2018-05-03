@@ -15,6 +15,23 @@ const DriveInBarChart = ({ report, separator = ': ' }) => (
   </BarChart>
 );
 
+const DriveInBiAxialBarChart = ({ report }) => {
+  report[0].name = 'Profit';
+
+  return (
+    <BarChart width={600} height={300} data={report}
+              margin={{top: 20, right: 30, left: 20, bottom: 5}}>
+       <CartesianGrid strokeDasharray="3 3"/>
+       <XAxis dataKey="name"/>
+       <YAxis yAxisId="left" orientation="left" stroke="#8884d8"/>
+       <YAxis yAxisId="right" orientation="right" stroke="#82ca9d"/>
+       <Tooltip/>
+       <Bar yAxisId="left" dataKey="concession_profit" fill="#8884d8" />
+       <Bar yAxisId="right" dataKey="showtime_profit" fill="#82ca9d" />
+    </BarChart>
+  );
+};
+
 class DriveInAreaChart extends Component {
   state = {
     activeIndex: 0,
@@ -144,17 +161,25 @@ export default class Reports extends Component {
         <label htmlFor='report-selection'>Select Your Report: </label>
         <select onChange={this.changeReport} id='report-selection'>
           <option default value='moviesByProfit'>Movies By Profit</option>
-          <option default value='moviesByPopularity'>Movies By Popularity</option>
-          <option default value='transactionsByDayOfWeek'>Most Popular Weekday</option>
+          <option value='moviesByPopularity'>Movies By Popularity</option>
+          <option value='transactionsByDayOfWeek'>Movies By Weekday</option>
+          <option value='concessionsByPopularity'>Concessions By Popularity</option>
+          <option value='ticketsVsConcessionProfits'>Tickets Vs Concession Profits</option>
         </select>
-        <DatePicker onChange={this.onStartDateChange} value={startDate} />
-        <DatePicker onChange={this.onEndDateChange} value={endDate} />
 
+        { !reportType.toLowerCase().includes('concession') ?
+          [
+            <DatePicker key={1} onChange={this.onStartDateChange} value={startDate} />,
+            <DatePicker key={2} onChange={this.onEndDateChange} value={endDate} />
+          ] : null
+      }
         {(() => {
           switch(reportType) {
             case 'moviesByProfit': return <DriveInBarChart separator=': $' report={report} />
             case 'moviesByPopularity': return <DriveInBarChart report={report} />
             case 'transactionsByDayOfWeek': return <DriveInAreaChart report={report} />
+            case 'concessionsByPopularity': return <DriveInAreaChart report={report} />
+            case 'ticketsVsConcessionProfits': return <DriveInBiAxialBarChart report={report} />
             default: return null;
           }
           })()

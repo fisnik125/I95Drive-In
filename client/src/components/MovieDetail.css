@@ -59,6 +59,13 @@
   display: flex;
   justify-content: space-around;
   font-size: 1.3em;
+  flex-direction: column;
+}
+
+.MovieDetail__modal-showtimes {
+  display: flex;
+  justify-content: space-around;
+  font-size: 1.3em;
 }
 
 .MovieDetail__modal-container-button {
@@ -66,7 +73,14 @@
   color: white;
   padding: 1rem;
   position: absolute;
-  bottom: 0;
   left: 0;
+  bottom: 0;
   width: 100%;
+}
+
+.MovieDetail__modal-concession {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  margin-bottom: 2rem;
 }

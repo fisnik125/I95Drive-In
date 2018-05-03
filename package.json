@@ -12,6 +12,7 @@
     "fixtures:load:showtimes": "node db/fixtures/showtimes.js",
     "fixtures:load:users": "node db/fixtures/users.js",
     "fixtures:load:transactions": "node db/fixtures/transactions.js",
+    "fixtures:load:concessions": "node db/fixtures/concessions.js",
     "test": "cd client && yarn test"
   },
   "dependencies": {

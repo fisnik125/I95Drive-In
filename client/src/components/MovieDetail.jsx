@@ -12,7 +12,17 @@ import './MovieDetail.css';
 class Showtime extends Component {
   state = {
     modalIsOpen: false,
-    quantity: 0,
+    showtimes: 0,
+    popcorn: 0,
+    candy: 0,
+    beverage: 0,
+    concessions: [],
+  }
+
+  componentWillMount() {
+    Api.get('/api/concessions')
+      .then(res => { this.setState({ concessions: res.concessions }); })
+      .catch(err => { console.error(err); });
   }
 
   toggleModal = () => {
@@ -23,25 +33,36 @@ class Showtime extends Component {
   }
 
   updateTotal = (ev) => {
-    const { value } = ev.target;
+    const { value, name } = ev.target;
 
-    this.setState({ quantity: value });
+    this.setState({ [name]: value });
   }
 
-  purchaseShowtimes = () => {
-    const { quantity } = this.state;
-    const { id: transactionableId } = this.props;
-    const transactionableType = 'showtimes';
+  puchase = () => {
+    let { id: transactionableId } = this.props; // Showtime ID
 
-    Api.post('/api/transactions', { transactionableId, transactionableType, quantity })
-      .then(() => { Alert.success('Movie Ticket(s) Purchased.'); })
-      .then(this.toggleModal)
-      .catch(err => { console.error('Error creating transaction: ', err); });
+    ['showtimes', 'popcorn', 'candy', 'beverage'].forEach(item => {
+      const quantity = this.state[item];
+      const transactionableType = item === 'showtimes' ? 'showtimes' : 'concessions';
+
+      if (!quantity) return;
+
+      if (transactionableType === 'concessions') {
+        const concession = this.state.concessions.find(c => c.type === item);
+        transactionableId = concession.id || concession._id;
+      }
+
+      Api.post('/api/transactions', { transactionableId, transactionableType, quantity })
+        .catch(err => { console.error('Error creating transaction: ', err); });
+    });
+
+    Alert.success('Item(s) Purchased.');
+    this.toggleModal();
   }
 
   render() {
     const { startDate, endDate, price } = this.props;
-    const { modalIsOpen, quantity } = this.state;
+    const { modalIsOpen, showtimes } = this.state;
 
     return [
       <div key={1} className='MovieDetail__showtime' onClick={this.toggleModal}>
@@ -58,11 +79,26 @@ class Showtime extends Component {
       <Modal key={2} ariaHideApp={false} isOpen={modalIsOpen} onRequestClose={this.toggleModal}>
         <h2>Purchase Tickets</h2>
         <div className='MovieDetail__modal-container'>
-          <span>${price} x </span>
-          <input value={quantity} onChange={this.updateTotal} type='number' min='1'/>
-          <span> = ${price * quantity}</span>
+          <div className='MovieDetail__modal-showtimes'>
+            <span>${price} x </span>
+            <input name='showtimes' value={showtimes} onChange={this.updateTotal} type='number' min='1'/>
+            <span> = ${price * showtimes}</span>
+          </div>
         </div>
-        <button className='MovieDetail__modal-container-button' onClick={this.purchaseShowtimes}>Purchase</button>
+        <h2>Purchase Concesions</h2>
+        <div className='MovieDetail__modal-container'>
+          <div className='MovieDetail__modal-concessions'>
+            { this.state.concessions.map((concession, i) => (
+              <div key={i} className='MovieDetail__modal-concession'>
+                <label>{concession.type}:</label>
+                <span>${concession.price} x </span>
+                <input name={concession.type} value={this.state[concession.type]} onChange={this.updateTotal} type='number' min='1'/>
+                <span> = ${concession.price * this.state[concession.type]}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+        <button className='MovieDetail__modal-container-button' onClick={this.puchase}>Purchase</button>
       </Modal>
     ];
   }

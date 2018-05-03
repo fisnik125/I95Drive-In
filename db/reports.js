@@ -5,6 +5,7 @@ const postgresCommands = {
     INNER JOIN showtimes ON transactions.transactionable_id = showtimes.id
     INNER JOIN movies ON showtimes.movie_id = movies.id
     WHERE showtimes.start_date BETWEEN $1 AND $2
+    AND transactions.transactionable_type = 'showtimes'
     GROUP BY name
     ORDER BY value DESC`,
   moviesByPopularity: `
@@ -13,6 +14,7 @@ const postgresCommands = {
     INNER JOIN showtimes ON transactions.transactionable_id = showtimes.id
     INNER JOIN movies ON showtimes.movie_id = movies.id
     WHERE showtimes.start_date BETWEEN $1 AND $2
+    AND transactions.transactionable_type = 'showtimes'
     GROUP BY name
     ORDER BY value DESC`,
   transactionsByDayOfWeek: `
@@ -20,8 +22,35 @@ const postgresCommands = {
     FROM transactions
     INNER JOIN showtimes ON transactions.transactionable_id = showtimes.id
     WHERE showtimes.start_date BETWEEN $1 AND $2
+    AND transactions.transactionable_type = 'showtimes'
     GROUP BY name
     ORDER BY value DESC;`,
+  concessionsByPopularity: `
+    SELECT concessions.type AS name, SUM(transactions.quantity)::double precision AS value
+    FROM transactions
+    INNER JOIN concessions ON transactions.transactionable_id = concessions.id
+    AND transactions.transactionable_type = 'concessions'
+    GROUP BY name
+    ORDER BY value DESC`,
+  ticketsVsConcessionProfits: `
+    WITH showtime_sales AS (
+      SELECT SUM(showtimes.price * transactions.quantity)::double precision AS showtime_profit
+      FROM transactions
+      INNER JOIN showtimes ON transactions.transactionable_id = showtimes.id
+      INNER JOIN movies ON showtimes.movie_id = movies.id
+      AND transactions.transactionable_type = 'showtimes'
+      ORDER BY showtime_profit DESC
+    ),
+
+    concession_sales AS (
+      SELECT SUM(concessions.price * transactions.quantity)::double precision AS concession_profit
+      FROM transactions
+      INNER JOIN concessions ON transactions.transactionable_id = concessions.id
+      WHERE transactions.transactionable_type = 'concessions'
+      ORDER BY concession_profit DESC
+    )
+
+    SELECT * FROM showtime_sales, concession_sales`,
 }
 
 const mongoCommands = {
@@ -47,7 +76,8 @@ const mongoCommands = {
       $unwind: "$showtimes"
     }, {
        $match: {
-         "showtimes.startDate": {$gte: new Date(startDate), $lt: new Date(endDate) }
+         "showtimes.startDate": {$gte: new Date(startDate), $lt: new Date(endDate) },
+         "transactionableType": "showtimes"
        }
     }, {
       $group: {
@@ -84,7 +114,8 @@ const mongoCommands = {
       $unwind: "$showtimes"
     }, {
        $match: {
-         "showtimes.startDate": {$gte: new Date(startDate), $lt: new Date(endDate) }
+         "showtimes.startDate": {$gte: new Date(startDate), $lt: new Date(endDate) },
+         "transactionableType": "showtimes"
        }
     }, {
       $group: {
@@ -111,6 +142,8 @@ const mongoCommands = {
     const dayOfWeek = { $cond: [ {$eq:[1,"$_id"]}, "Sunday", ifMon] };
 
     return db.collection('transactions').aggregate([{
+         $match: { "transactionableType": "showtimes" }
+        }, {
          $lookup: {
             from: 'showtimes',
             localField: 'transactionableId',
@@ -140,6 +173,68 @@ const mongoCommands = {
           $sort: { value: -1 }
         }
      ]).toArray();
+  },
+  concessionsByPopularity: async (db, params) => {
+    return db.collection('transactions').aggregate([{
+       $match: {
+         "transactionableType": "concessions"
+       }
+    }, {
+      $lookup: {
+        from: 'concessions',
+        localField: 'transactionableId',
+        foreignField: '_id',
+        as: 'concessions'
+      }
+    }, {
+      $unwind: "$concessions"
+    }, {
+      $group: {
+        _id: "$concessions.type",
+        value: { $sum: '$quantity' }
+      }
+    }, {
+      $sort: { value: -1 }
+    }, {
+      $unwind: "$_id"
+    }, {
+      $project: { name: "$_id", value: 1, _id: 0 }
+    }]).toArray();
+  },
+  ticketsVsConcessionProfits: async (db, params) => {
+    return db.collection('transactions').aggregate([{
+      $lookup: {
+        from: 'concessions',
+        localField: 'transactionableId',
+        foreignField: '_id',
+        as: 'concessions'
+      }
+    }, {
+      $lookup: {
+        from: 'showtimes',
+        localField: 'transactionableId',
+        foreignField: '_id',
+        as: 'showtimes'
+      }
+    }, {
+      $unwind: {
+        path: "$concessions",
+        preserveNullAndEmptyArrays: true
+      }
+    }, {
+      $unwind: {
+        path: "$showtimes",
+        preserveNullAndEmptyArrays: true
+      }
+    }, {
+      $group: {
+        _id: "null",
+        concession_profit: { $sum: { $multiply: [ "$quantity", "$concessions.price" ] } },
+        showtime_profit: { $sum: { $multiply: ["$quantity", "$showtimes.price"] } }
+      }
+    }, {
+      $project: { _id: 0, concession_profit: 1, showtime_profit: 1 }
+    }]).toArray();
   }
 }
 
