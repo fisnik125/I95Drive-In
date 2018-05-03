@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import moment from 'moment';
 import Modal from 'react-modal';
 import Alert from 'react-s-alert';
-import Concession from './Concession';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 
@@ -63,8 +62,7 @@ class Showtime extends Component {
           <input value={quantity} onChange={this.updateTotal} type='number' min='1'/>
           <span> = ${price * quantity}</span>
         </div>
-        <Concession />
-        <button className='MovieDetail__modal-container-button' onClick={this.purchaseShowtimes}>Purchase</button>
+        <button className='MovieDetail__modal-container-button' onClick={this.puchase}>Purchase</button>
       </Modal>
     ];
   }

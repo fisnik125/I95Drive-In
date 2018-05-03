@@ -5,10 +5,9 @@ const postgresCommands = {
     CREATE TABLE concessions(
       id SERIAL PRIMARY KEY,
       type TEXT NOT NULL,
-      price NUMERIC NOT NULL,
-    );`,
+      price NUMERIC(4,2) NOT NULL);`,
   insert: `
-    INSERT INTO concessions (type, price, rated, released, runtime, genre, director, writer, actors, plot, language, country, poster, production)
+    INSERT INTO concessions(type, price)
     VALUES ($1, $2);`,
   all: `
     SELECT * FROM concessions`,
@@ -16,8 +15,7 @@ const postgresCommands = {
     TRUNCATE concessions CASCADE;
   `,
   find: `
-    SELECT * FROM concessions WHERE id = $1
-  `,
+    SELECT * FROM concessions WHERE id = $1`,
   }
 
 const mongoCommands = {

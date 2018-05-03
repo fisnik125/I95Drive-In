@@ -66,38 +66,6 @@ nav.navbar{
   margin-bottom: 25px;
 }
 
-/* CONCESSION */
-.concession_title{
-  font-family: 'Limelight', cursive;
-  margin:0;
-  font-size: 24px;
-  text-align:center;
-  background: lightskyblue;
-  color: darkblue;
-  font-weight: bold;
-  text-shadow: 1px 1px #FFFFFF;
-}
-
-.concession_item{
-  font-family: 'Limelight', cursive;
-  font-size: 2.5rem;
-}
-
-.item_row{
-  border-bottom: solid;
-  border-bottom-color: #efefef;
-  padding-top: 10px;
-}
-
-.sub_tit{
-  font-family: 'Limelight', cursive;
-  text-align:right;
-}
-
-input{
-  text-align:center;
-}
-
 /* HEADER */
 .header{
   text-align: center;
