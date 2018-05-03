@@ -59,6 +59,13 @@
   display: flex;
   justify-content: space-around;
   font-size: 1.3em;
+  flex-direction: column;
+}
+
+.MovieDetail__modal-showtimes {
+  display: flex;
+  justify-content: space-around;
+  font-size: 1.3em;
 }
 
 .MovieDetail__modal-container-button {

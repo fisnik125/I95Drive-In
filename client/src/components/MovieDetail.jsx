@@ -13,6 +13,7 @@ class Showtime extends Component {
   state = {
     modalIsOpen: false,
     quantity: 0,
+    concessions: [],
   }
 
   toggleModal = () => {
@@ -28,7 +29,7 @@ class Showtime extends Component {
     this.setState({ quantity: value });
   }
 
-  purchaseShowtimes = () => {
+  puchase = () => {
     const { quantity } = this.state;
     const { id: transactionableId } = this.props;
     const transactionableType = 'showtimes';
@@ -58,9 +59,20 @@ class Showtime extends Component {
       <Modal key={2} ariaHideApp={false} isOpen={modalIsOpen} onRequestClose={this.toggleModal}>
         <h2>Purchase Tickets</h2>
         <div className='MovieDetail__modal-container'>
-          <span>${price} x </span>
-          <input value={quantity} onChange={this.updateTotal} type='number' min='1'/>
-          <span> = ${price * quantity}</span>
+          <div className='MovieDetail__modal-showtimes'>
+            <span>${price} x </span>
+            <input value={quantity} onChange={this.updateTotal} type='number' min='1'/>
+            <span> = ${price * quantity}</span>
+          </div>
+        </div>
+        <h2>Purchase Concesions</h2>
+        <div className='MovieDetail__modal-container'>
+          <div className='MovieDetail__modal-showtimes'>
+            <label>Popcorn</label>
+            <span>${price} x </span>
+            <input value={quantity} onChange={this.updateTotal} type='number' min='1'/>
+            <span> = ${price * quantity}</span>
+          </div>
         </div>
         <button className='MovieDetail__modal-container-button' onClick={this.puchase}>Purchase</button>
       </Modal>

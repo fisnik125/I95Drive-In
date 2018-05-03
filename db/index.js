@@ -5,6 +5,7 @@ import Users from './users'
 import Movies from './movies';
 import Showtimes from './showtimes';
 import Transactions from './transactions';
+import Concessions from './concessions';
 
 const postgres = new Pool();
 let mongo = null;
@@ -49,6 +50,7 @@ export const findOrCreateDB = async (dbName) => {
     await query(Movies.setup);
     await query(Showtimes.setup);
     await query(Transactions.setup);
+    await query(Concessions.setup);
   }
 }
 
