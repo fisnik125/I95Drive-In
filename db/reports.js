@@ -5,6 +5,7 @@ const postgresCommands = {
     INNER JOIN showtimes ON transactions.transactionable_id = showtimes.id
     INNER JOIN movies ON showtimes.movie_id = movies.id
     WHERE showtimes.start_date BETWEEN $1 AND $2
+    AND transactions.transactionable_type = 'showtimes'
     GROUP BY name
     ORDER BY value DESC`,
   moviesByPopularity: `
@@ -13,6 +14,7 @@ const postgresCommands = {
     INNER JOIN showtimes ON transactions.transactionable_id = showtimes.id
     INNER JOIN movies ON showtimes.movie_id = movies.id
     WHERE showtimes.start_date BETWEEN $1 AND $2
+    AND transactions.transactionable_type = 'showtimes'
     GROUP BY name
     ORDER BY value DESC`,
   transactionsByDayOfWeek: `
@@ -47,7 +49,8 @@ const mongoCommands = {
       $unwind: "$showtimes"
     }, {
        $match: {
-         "showtimes.startDate": {$gte: new Date(startDate), $lt: new Date(endDate) }
+         "showtimes.startDate": {$gte: new Date(startDate), $lt: new Date(endDate) },
+         "transactionableType": "showtimes"
        }
     }, {
       $group: {
@@ -84,7 +87,8 @@ const mongoCommands = {
       $unwind: "$showtimes"
     }, {
        $match: {
-         "showtimes.startDate": {$gte: new Date(startDate), $lt: new Date(endDate) }
+         "showtimes.startDate": {$gte: new Date(startDate), $lt: new Date(endDate) },
+         "transactionableType": "showtimes"
        }
     }, {
       $group: {
